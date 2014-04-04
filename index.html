@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Auth-livefyre by gobengo</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Auth-livefyre</h1>
+        <h2>auth plugin and delegate for Livefyre</h2>
+        <a href="https://github.com/gobengo/auth-livefyre" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="livefyre-auth" class="anchor" href="#livefyre-auth"><span class="octicon octicon-link"></span></a>Livefyre Auth</h1>
+
+<p><code>auth-livefyre</code> provides a series of modules for helping with Authentication
+in Livefyre-powered Applications.</p>
+
+<h2>
+<a name="pluginauth" class="anchor" href="#pluginauth"><span class="octicon octicon-link"></span></a><code>.plugin(auth)</code>
+</h2>
+
+<p>Plug in to an instance of <a href="https://github.com/Livefyre/auth"><code>auth</code></a></p>
+
+<p><code>auth</code> allows apps to publish and subscribe to login events, and to trigger
+auth-related actions separately from how the web page operator delegates the
+implementaiton details of their log in flow.</p>
+
+<p>The plugin will watch for 'authenticate' events on auth that have Livefyre
+credentials, and it will then try to authenticate them and log the user in with
+<code>auth.login({ livefyre: user })</code></p>
+
+<p>It will also load a user from session on page load, and clear the session
+on <code>auth</code> <code>logout</code> events.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">'livefyre-auth'</span><span class="p">).</span><span class="nx">plugin</span><span class="p">(</span><span class="nx">auth</span><span class="p">);</span>
+</pre></div>
+
+<p>Note: To create a delegate for a non-production cluster, you'll need to pass the
+<code>serverUrl</code> as a second parameter to <code>.plugin</code></p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">'livefyre-auth'</span><span class="p">).</span><span class="nx">plugin</span><span class="p">(</span><span class="nx">auth</span><span class="p">,</span> <span class="s1">'uat.livefyre.com'</span><span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="createdelegateserverurl" class="anchor" href="#createdelegateserverurl"><span class="octicon octicon-link"></span></a><code>.createDelegate(serverUrl)</code>
+</h2>
+
+<p>Create an <code>auth</code> delegate object to be passed to <code>auth.delegate()</code>.
+This will configure auth to be controlled by Livefyre.com accounts and profiles.
+Livefyre Enterprise customers will rarely use this.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">livefyreAuthDelegate</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'auth-livefyre'</span><span class="p">).</span><span class="nx">createDelegate</span><span class="p">(</span><span class="s1">'http://livefyre.com'</span><span class="p">);</span>
+
+<span class="nx">auth</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="nx">livefyreAuthDelegate</span><span class="p">);</span>
+
+<span class="c1">// This would launch a Livefyre.com login window</span>
+<span class="nx">auth</span><span class="p">.</span><span class="nx">login</span><span class="p">();</span>
+</pre></div>
+
+<h2>
+<a name="fetchusercredentials-errback" class="anchor" href="#fetchusercredentials-errback"><span class="octicon octicon-link"></span></a><code>.fetchUser(credentials, errback)</code>
+</h2>
+
+<p>Fetch a LivefyreUser from the AuthAPI.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">livefyreAuth</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'auth-livefyre'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">authCredentials</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">serverUrl</span><span class="o">:</span> <span class="s1">'http://livefyre.com'</span><span class="p">,</span>
+    <span class="nx">token</span><span class="o">:</span> <span class="s1">'lol'</span>
+<span class="p">};</span>
+<span class="nx">livefyreAuth</span><span class="p">.</span><span class="nx">fetchUser</span><span class="p">(</span><span class="nx">authCredentials</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">userInfo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>
+<a name="user" class="anchor" href="#user"><span class="octicon octicon-link"></span></a><code>.User</code>
+</h2>
+
+<p>Create a Livefyre User model. It is rare that you'd create this directly.
+Check out <code>.fetchUser()</code>.</p>
+
+<h2>
+<a name="api" class="anchor" href="#api"><span class="octicon octicon-link"></span></a><code>.api</code>
+</h2>
+
+<p>Fetch the Livefyre Auth API.</p>
+
+<p>Use <code>.updateUser(user, data)</code> to update a LivefyreUser
+from the auth api response data</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">authApi</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'auth-livefyre'</span><span class="p">).</span><span class="nx">api</span><span class="p">;</span>
+
+<span class="nx">authApi</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">userInfo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">errback</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LivefyreUser</span><span class="p">();</span>
+    <span class="nx">authApi</span><span class="p">.</span><span class="nx">updateUser</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">userInfo</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="session" class="anchor" href="#session"><span class="octicon octicon-link"></span></a><code>.session</code>
+</h3>
+
+<p>Helpers for dealing with the Livefyre User session</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/gobengo/auth-livefyre/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/gobengo/auth-livefyre/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/gobengo/auth-livefyre"></a> is maintained by <a href="https://github.com/gobengo">gobengo</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

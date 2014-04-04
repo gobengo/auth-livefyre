@@ -1,6 +1,6 @@
 # Livefyre Auth
 
-`auth-livefyre` provides a series of use modules for helping with Authentication
+`auth-livefyre` provides a series of modules for helping with Authentication
 in Livefyre-powered Applications.
 
 ## `.plugin(auth)`

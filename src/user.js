@@ -86,17 +86,6 @@ LivefyreUser.prototype.unset = function(key) {
 };
 
 /**
- * Clear all attributes back to defaults.
- */
-LivefyreUser.prototype.logout = LivefyreUser.prototype.reset = function() {
-    this._attributes = {};
-    this.set(LivefyreUser.getDefaults());
-    storage.remove(AUTH_COOKIE_KEY);
-    storage.remove(AUTH_CREDS);
-    this.emit(LivefyreUser.EVENTS.LOGOUT);
-};
-
-/**
  * Determines if this user is authenticated or not.
  * @return {boolean}
  */

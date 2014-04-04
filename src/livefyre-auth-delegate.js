@@ -1,14 +1,12 @@
 // auth delegate to log in with your Livefyre.com account
 
-var bind = require('./util/bind'),
-    jsonp = require('./util/jsonp'),
-    storage = require('./util/storage'),
-    user = require('./user'),
-    userAgent = navigator.userAgent,
-    AUTH_COOKIE_KEY = 'fyre-auth',
-    fetchUser = require('./fetch-user'),
-    IS_OPERA = userAgent.indexOf('Opera') > -1,
-    session = require('./session');
+var jsonp = require('./util/jsonp');
+var storage = require('./util/storage');
+var userAgent = navigator.userAgent;
+var AUTH_COOKIE_KEY = 'fyre-auth';
+var fetchUser = require('./fetch-user');
+var IS_OPERA = userAgent.indexOf('Opera') > -1;
+var session = require('./session');
 
 /**
  * @param {string} articleId
@@ -43,14 +41,11 @@ LivefyreDelegate.prototype.login = function(authenticate) {
  * @private
  */
 LivefyreDelegate.prototype._popup = function(callback) {
-    var self = this;
     var serverUrl = this.serverUrl;
-
-    windowUrl = serverUrl + '/auth/popup/login/',
-    popup = window.open(windowUrl, 'authWindow',
-    'width=530;height=365;location=true;menubar=false;resizable=false;scrollbars=false'),
-
-    timeout = setInterval(function() {
+    var windowUrl = serverUrl + '/auth/popup/login/';
+    var popup = window.open(windowUrl, 'authWindow',
+    'width=530;height=365;location=true;menubar=false;resizable=false;scrollbars=false');
+    var timeout = setInterval(function() {
         testResult(callback, popup);
     }, 100);
 

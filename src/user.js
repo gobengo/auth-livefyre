@@ -6,11 +6,8 @@
  * This should be assumed to be a global singleton.
  */
 
-var EventEmitter = require('event-emitter'),
-    inherits = require('inherits'),
-    storage = require('./util/storage'),
-    AUTH_COOKIE_KEY = 'fyre-auth',
-    AUTH_CREDS = 'fyre-authentication-creds';
+var EventEmitter = require('event-emitter');
+var inherits = require('inherits');
 
 /**
  * @param {Object} initialAttr

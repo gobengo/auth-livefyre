@@ -52,6 +52,11 @@ livefyreAuth.fetchUser(authCredentials, function (err, user, userInfo) {
 });
 ```
 
+## `.User`
+
+Create a Livefyre User model. It is rare that you'd create this directly.
+Check out `.fetchUser()`.
+
 ## `.api`
 
 Fetch the Livefyre Auth API.
@@ -70,3 +75,7 @@ authApi(opts, function (err, userInfo) {
     authApi.updateUser(user, userInfo);
 });
 ```
+
+### `.session`
+
+Helpers for dealing with the Livefyre User session

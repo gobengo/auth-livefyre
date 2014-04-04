@@ -1,3 +1,4 @@
+var base64 = require('base64');
 var jsonp = require('./util/jsonp');
 
 /**
@@ -12,11 +13,19 @@ var jsonp = require('./util/jsonp');
 var authApi = module.exports = function (opts, callback) {
     // TODO: opts.articleId should not have to be b64-encoded
     var qsParts = [];
+    var token = opts && opts.token;
+    var serverUrl = opts && opts.serverUrl;
     var queryString;
     var url;
-    if (opts.token) {
+
+    if (token) {
         qsParts.push(qsParam('lftoken', opts.token));
     }
+
+    if (! serverUrl) {
+        serverUrl = token ? serverUrlFromToken(token) : 'http://livefyre.com';
+    }
+
     if (opts.bpChannel) {
         qsParts.push(qsParam('bp_channel', opts.bpChannel));
     }
@@ -27,7 +36,7 @@ var authApi = module.exports = function (opts, callback) {
     }
     queryString = qsParts.join('&');
 
-    url = [opts.serverUrl || 'http://livefyre.com', '/api/v3.0/auth/?', queryString].join('');
+    url = [serverUrl, '/api/v3.0/auth/?', queryString].join('');
 
     jsonp.req(url, function(err, resp) {
         var authData = resp && resp.data;
@@ -101,4 +110,17 @@ function qsParam(key, value) {
         .replace('{key}', key)
         .replace('{value}', encodeURIComponent(value));
     return qsPart;
+}
+
+function networkFromToken (token) {
+    var tokenJSON = base64.atob(token.split('.')[1]);
+    var tokenData = JSON.parse(tokenJSON);
+    var network = tokenData.domain;
+    return network;
+}
+
+function serverUrlFromToken(token) {
+    var network = networkFromToken(token);
+    var serverUrl = document.location.protocol + '//admin.' + network;
+    return serverUrl;
 }

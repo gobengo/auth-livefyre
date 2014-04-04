@@ -13,8 +13,13 @@ var LivefyreUser = require('./user');
  * 
  * It will also load users from session initially, and clear the session
  * on auth 'logout' events
+ *
+ * @param auth {Auth} An auth module
+ * @param [serverUrl] {string} The Livefyre host that is serving up auth.
+ *     This should only need to be provided if you're using the 'livefyre.com'
+ *     network on a non-production cluster
  */
-module.exports = function (auth) {
+module.exports = function (auth, serverUrl) {
     auth.livefyre = livefyreAuth;
 
     function login(user) {
@@ -29,9 +34,15 @@ module.exports = function (auth) {
 
     // When there are credentials for Livefyre
     // authenticate the user and call auth.login({ livefyre: user })
-    auth.on('authenticate', function (credentials) {
+    auth.on('authenticate.livefyre', function (credentials) {
         if ( ! credentials) {
             return;
+        }
+        if (typeof credentials === 'string') {
+            credentials = {
+                token: credentials,
+                serverUrl: serverUrl
+            };
         }
         // The LivefyreAuthDelegate will be able to construct a user
         // by nature of its login process. Those are valid credentials
@@ -39,7 +50,9 @@ module.exports = function (auth) {
         if (credentials instanceof LivefyreUser) {
             return login(credentials);
         }
-        authenticate(credentials, function (err, user, userInfo) {
+        // Try to get a user from the credentials
+        // If succeed, save to session (cookie/storage)
+        fetchUser(credentials, function (err, user, userInfo) {
             if (err) {
                 log('Error authenticating with credentials', credentials, err);
                 return;
@@ -54,24 +67,6 @@ module.exports = function (auth) {
         session.clear();
     });
 };
-
-/**
- * Authenticate the alleged Livefyre credentials
- * then call errback with a LivefyreUser and userInfo
- */
-function authenticate(credentials, errback) {
-    if (credentials.livefyre) {
-        credentials = credentials.livefyre;
-    }
-    // Try to get a user from the credentials
-    // If succeed, save to session (cookie/storage)
-    fetchUser(credentials, function (err, user, userInfo) {
-        if (err) {
-            return errback(err);
-        }
-        errback(null, user, userInfo);
-    });
-}
 
 // TODO: Not just anyone should be able to listen for events that contain
 // the livefyre token. You must register a named plugin with auth, and auth

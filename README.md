@@ -22,6 +22,13 @@ on `auth` `logout` events.
 require('livefyre-auth').plugin(auth);
 ```
 
+Note: To create a delegate for a non-production cluster, you'll need to pass the
+`serverUrl` as a second parameter to `.plugin`
+
+```javascript
+require('livefyre-auth').plugin(auth, 'uat.livefyre.com');
+```
+
 ## `.createDelegate(serverUrl)`
 
 Create an `auth` delegate object to be passed to `auth.delegate()`.

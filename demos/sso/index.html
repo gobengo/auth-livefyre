@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+    <button id="auth-button">Log in</button>
+    <p id="auth-log"></p>
+<!-- scripts -->
+    <script src="../../lib/cajon/cajon.js"></script>
+    <script src="../../config/requirejs.conf.js"></script>
+    <script>
+        require.config({
+            baseUrl: '../../'
+        });
+        require(['demos/sso/sso-demo']);
+    </script>
+</body>
+</html>

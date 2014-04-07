@@ -9,10 +9,10 @@ require.config({
     debug: 'lib/debug/debug'
   },
   packages: [{
-    name: 'livefyre-auth',
+    name: 'auth-livefyre',
     location: 'src'
   },{
-    name: 'livefyre-auth-tests',
+    name: 'auth-livefyre-tests',
     location: 'test'
   },{
     name: 'auth',

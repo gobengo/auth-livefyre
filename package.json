@@ -1,5 +1,5 @@
 {
-  "name": "livefyre-auth",
+  "name": "auth-livefyre",
   "description": "Authentication Delegate for Livefyre projects",
   "author": "Livefyre <support@livefyre.com>",
   "repository": "https://github.com/Livefyre/auth-delegate",

@@ -1,10 +1,10 @@
 var auth = require('auth');
-require('livefyre-auth').plugin(auth);
+require('auth-livefyre').plugin(auth);
 
-var log = require('debug')('livefyre-auth-demo');
+var log = require('debug')('auth-livefyre-demo');
 var createAuthButton = require('auth/contrib/auth-button');
 var createAuthLog = require('auth/contrib/auth-log');
-var livefyreDelegate = require('livefyre-auth/livefyre-auth-delegate');
+var livefyreDelegate = require('auth-livefyre/livefyre-auth-delegate');
 
 var delegate = window.delegate = livefyreDelegate('http://www.livefyre.com');
 auth.delegate(delegate);

@@ -1,5 +1,5 @@
 var auth = require('auth');
-require('livefyre-auth').plugin(auth);
+require('auth-livefyre').plugin(auth);
 var log = require('debug')('livefyre-sso-auth-demo');
 var createAuthButton = require('auth/contrib/auth-button');
 var createAuthLog = require('auth/contrib/auth-log');

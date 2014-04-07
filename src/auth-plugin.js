@@ -1,6 +1,6 @@
-var livefyreAuth = require('livefyre-auth');
+var livefyreAuth = require('auth-livefyre');
 var fetchUser = require('./fetch-user');
-var log = require('debug')('livefyre-auth/auth-plugin');
+var log = require('debug')('auth-livefyre/auth-plugin');
 var session = require('./session');
 var LivefyreUser = require('./user');
 

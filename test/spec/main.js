@@ -1,8 +1,8 @@
-var livefyreAuth = require('livefyre-auth');
+var livefyreAuth = require('auth-livefyre');
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-describe('livefyre-auth', function () {
+describe('auth-livefyre', function () {
     it('is truthy', function (){
         assert(livefyreAuth);
     });

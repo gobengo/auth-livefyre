@@ -19,14 +19,14 @@ It will also load a user from session on page load, and clear the session
 on `auth` `logout` events.
 
 ```javascript
-require('livefyre-auth').plugin(auth);
+require('auth-livefyre').plugin(auth);
 ```
 
 Note: To create a delegate for a non-production cluster, you'll need to pass the
 `serverUrl` as a second parameter to `.plugin`
 
 ```javascript
-require('livefyre-auth').plugin(auth, 'uat.livefyre.com');
+require('auth-livefyre').plugin(auth, 'uat.livefyre.com');
 ```
 
 ## `.createDelegate(serverUrl)`

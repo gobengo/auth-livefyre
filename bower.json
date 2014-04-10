@@ -9,6 +9,7 @@
     "event-emitter": "git://github.com/Livefyre/event-emitter.git#~0.0.1",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "js-md5": "~1.1.0",
+    "requirejs-plugins": "~1.0.2",
     "sinonjs": "~1.7.3"
   },
   "dependencies": {

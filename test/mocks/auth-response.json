@@ -1,0 +1,27 @@
+{
+    "status": "ok",
+    "code": 200,
+    "data": {
+        "profile": {
+            "profileUrl": null,
+            "settingsUrl": null,
+            "displayName": "Commenter 0",
+            "avatar": "http://avatars.fyre.co/a/anon/50.jpg",
+            "id": "commenter_0@labs.fyre.co"
+        },
+        "token": {
+            "value": "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5Njc0Nzk4LjkwNDQzNSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.qdbTuQj4gsrT4sMyH1ntmopFasFTsWFWOlNVqNAxyFQ",
+            "ttl": 2592000
+        },
+        "modScopes": {
+            "collections": [],
+            "networks": [],
+            "sites": []
+        },
+        "isModAnywhere": true,
+        "auth_token": {
+            "value": "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY",
+            "ttl": 2112361
+        }
+    }
+}

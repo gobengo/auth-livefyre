@@ -9,19 +9,16 @@ var LivefyreUser = require('./user');
  * @param {string=} opts.articleId
  * @param {string=} opts.siteId
  * @param {function()=} callback
+ * @param {object} opts.authApi a custom AuthApi to use
  */
 module.exports = function (opts, errback) {
-    authApi(opts, function (err, userInfo) {
+    var api = opts.authApi || authApi;
+    api.authenticate(opts, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
-        var user = createUser(userInfo);
+        var user = new LivefyreUser();
+        api.updateUser(user, userInfo);
         errback(null, user, userInfo);
     });
 };
-
-function createUser(userInfo) {
-    var user = new LivefyreUser();
-    authApi.updateUser(user, userInfo);
-    return user;
-}

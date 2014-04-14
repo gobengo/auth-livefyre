@@ -50,6 +50,7 @@ module.exports = function (auth, serverUrl) {
         if (credentials instanceof LivefyreUser) {
             return login(credentials);
         }
+
         // Try to get a user from the credentials
         // If succeed, save to session (cookie/storage)
         fetchUser(credentials, function (err, user, userInfo) {

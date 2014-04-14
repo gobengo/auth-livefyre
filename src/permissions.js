@@ -2,6 +2,10 @@
 
 var authApi = require('./auth-api');
 
+var permissions = module.exports = {};
+
+permissions._authApi = authApi;
+
 /**
  * Fetch permissions for a Livefyre Collection
  * @param token {string} lftoken of user you want permissions for
@@ -10,16 +14,22 @@ var authApi = require('./auth-api');
  * @param collection.articleId {string} Article ID of Collection
  * @throws Error if you didn't pass all required Collection info
  */
-exports.forCollection = function (token, collection, errback) {
+permissions.forCollection = function (token, collection, errback) {
     validateCollection(collection);
 
     var opts = Object.create(collection);
     opts.token = token;
 
-    authApi(opts, function (err, resp) {
-        errback(err, resp);
+    this._authApi.authenticate(opts, function (err, resp) {
+        if (err) {
+            return errback(err);
+        }
+        var authorization = new CollectionAuthorization(collection, resp);
+        errback(null, authorization);
     });
 };
+
+permissions.CollectionAuthorization = CollectionAuthorization;
 
 function validateCollection(collection) {
     var collectionOpts = ['siteId', 'articleId', 'network'];
@@ -36,4 +46,16 @@ function collectionOptError(optName, collection) {
     err.collection = collection;
     err.missingOption = optName;
     return err;
+}
+
+/**
+ * An Object that holds information
+ * about a user's authorization in a Collection
+ * @param collection.network {string} Network of Collection
+ * @param collection.siteId {string} Site ID of Collection
+ * @param collection.articleId {string} Article ID of Collection
+ * @param authData {object} data returned from auth API
+ */
+function CollectionAuthorization(collection, authData) {
+    this.collection = collection;
 }

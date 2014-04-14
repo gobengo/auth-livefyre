@@ -2,6 +2,11 @@ var base64 = require('base64');
 var jsonp = require('./util/jsonp');
 
 /**
+ * An Object that can talk to Livefyre's Auth API over HTTP
+ */
+var authApi = module.exports = {};
+
+/**
  * Fetch user profile information from the Livefyre Auth API
  * @param {string} opts.token
  * @param {string=} opts.serverUrl
@@ -10,7 +15,7 @@ var jsonp = require('./util/jsonp');
  * @param {string=} opts.siteId
  * @param {function()=} callback
  */
-var authApi = module.exports = function (opts, callback) {
+authApi.authenticate = function (opts, errback) {
     // TODO: opts.articleId should not have to be b64-encoded
     var qsParts = [];
     var token = opts && opts.token;
@@ -38,13 +43,22 @@ var authApi = module.exports = function (opts, callback) {
 
     url = [serverUrl, '/api/v3.0/auth/?', queryString].join('');
 
-    jsonp.req(url, function(err, resp) {
+    // Use opts._request function if it is passed. This will make it
+    // easy to mock
+    this._request(url, function(err, resp) {
         if ( ! err) {
-            err = jsonpError(resp);            
+            err = jsonpError(resp);
         }
         var authData = resp && resp.data;
-        callback(err, authData);
+        errback(err, authData);
     });
+};
+
+/**
+ * Make an HTTP Request to the provided url, then errback the response
+ */
+authApi._request = function (url, errback) {
+    jsonp.req(url, errback);
 };
 
 // Since JSONP will always return 200, inspect the response

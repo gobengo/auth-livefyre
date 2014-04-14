@@ -31,7 +31,7 @@ var authApi = module.exports = function (opts, callback) {
     }
     if (opts.articleId && opts.siteId) {
         qsParts.push(
-            qsParam('articleId', opts.articleId),
+            qsParam('articleId', base64.btoa(opts.articleId)),
             qsParam('siteId', opts.siteId));
     }
     queryString = qsParts.join('&');
@@ -39,10 +39,28 @@ var authApi = module.exports = function (opts, callback) {
     url = [serverUrl, '/api/v3.0/auth/?', queryString].join('');
 
     jsonp.req(url, function(err, resp) {
+        if ( ! err) {
+            err = jsonpError(resp);            
+        }
         var authData = resp && resp.data;
         callback(err, authData);
     });
 };
+
+// Since JSONP will always return 200, inspect the response
+// to see if it was an error, and return an Error if so
+// else return undefined
+function jsonpError(resp) {
+    var code = resp && resp.code;
+    if (code === 200) {
+        // no error
+        return;
+    }
+    var err = new Error("Error requesting with JSONP");
+    err.response = resp;
+    err.code = code;
+    return err;
+}
 
 /**
  * Update a user model given data from the Auth API

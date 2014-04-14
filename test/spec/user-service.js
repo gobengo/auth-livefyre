@@ -1,4 +1,4 @@
-var fetchUser = require('auth-livefyre/fetch-user');
+var userService = require('auth-livefyre/user-service');
 var assert = require('chai').assert;
 var authApi = require('auth-livefyre/auth-api');
 var LivefyreUser = require('auth-livefyre/user');
@@ -8,25 +8,30 @@ var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy
 var mockAuthResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-auth.json');
 var mockAuthApi = createMockAuthApi(mockAuthResponse);
 
+userService = Object.create(userService);
+userService._authApi = mockAuthApi;
+
 // // permissions shouldn't actually make API requests
 // permissions = Object.create(permissions);
 // permissions._authApi = mockAuthApi;
 
-describe('auth-livefyre/fetch-user', function () {
-    it('is a function', function () {
-        assert.typeOf(fetchUser, 'function');
+describe('auth-livefyre/user-service', function () {
+    it('is an object', function () {
+        assert.typeOf(userService, 'object');
     });
 
-    it('fetches a LivefyreUser instance', function (done) {
-        var opts = {
-            token: labsToken
-        };
-        fetchUser(opts, function (err, user) {
-            assert.instanceOf(user, LivefyreUser);
-            // assert.ok(perms.isModAnywhere);
-            // assert.ok(perms.modScopes);
-            // assert.ok(perms.permissions);
-            done(err);
+    describe('.fetch', function () {
+        it('fetches a LivefyreUser instance', function (done) {
+            var opts = {
+                token: labsToken
+            };
+            userService.fetch(opts, function (err, user) {
+                assert.instanceOf(user, LivefyreUser);
+                // assert.ok(perms.isModAnywhere);
+                // assert.ok(perms.modScopes);
+                // assert.ok(perms.permissions);
+                done(err);
+            });
         });
     });
 });

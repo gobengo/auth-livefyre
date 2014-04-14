@@ -1,8 +1,12 @@
 var authApi = require('./auth-api');
 var LivefyreUser = require('./user');
 
+// Use the default authApi, but if you want a custom
+// user-service, you can Object.create and override.
+exports._authApi = authApi;
+
 /**
- * Fetch user profile information from the Livefyre Auth API
+ * Fetch a User from the Livefyre Auth API
  * @param {string} opts.token
  * @param {string=} opts.serverUrl
  * @param {string=} opts.bpChannel
@@ -11,14 +15,14 @@ var LivefyreUser = require('./user');
  * @param {function()=} callback
  * @param {object} opts.authApi a custom AuthApi to use
  */
-module.exports = function (opts, errback) {
-    var api = opts.authApi || authApi;
-    api.authenticate(opts, function (err, userInfo) {
+exports.fetch = function (opts, errback) {
+    var authApi = this._authApi;
+    authApi.authenticate(opts, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
         var user = new LivefyreUser();
-        api.updateUser(user, userInfo);
+        authApi.updateUser(user, userInfo);
         errback(null, user, userInfo);
     });
 };

@@ -4,7 +4,7 @@ var jsonp = require('./util/jsonp');
 var storage = require('./util/storage');
 var userAgent = navigator.userAgent;
 var AUTH_COOKIE_KEY = 'fyre-auth';
-var fetchUser = require('./fetch-user');
+var userService = require('./user-service');
 var IS_OPERA = userAgent.indexOf('Opera') > -1;
 var session = require('./session');
 
@@ -101,7 +101,7 @@ LivefyreDelegate.prototype.restoreSession = function(callback) {
         callback(null, cookieData.token.value);
     } else {
         storage.remove(AUTH_COOKIE_KEY);
-        fetchUser({ serverUrl: this.serverUrl }, function (err, user, userInfo) {
+        userService.fetch({ serverUrl: this.serverUrl }, function (err, user, userInfo) {
             if (err) {
                 return callback(err);
             }

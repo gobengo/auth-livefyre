@@ -1,5 +1,5 @@
 var livefyreAuth = require('auth-livefyre');
-var fetchUser = require('./fetch-user');
+var userService = require('./user-service');
 var log = require('debug')('auth-livefyre/auth-plugin');
 var session = require('./session');
 var LivefyreUser = require('./user');
@@ -53,7 +53,7 @@ module.exports = function (auth, serverUrl) {
 
         // Try to get a user from the credentials
         // If succeed, save to session (cookie/storage)
-        fetchUser(credentials, function (err, user, userInfo) {
+        userService.fetch(credentials, function (err, user, userInfo) {
             if (err) {
                 log('Error authenticating with credentials', credentials, err);
                 return;
@@ -75,7 +75,7 @@ module.exports = function (auth, serverUrl) {
 
 // module.exports = {
 //     authenticate: function (credentials, errback) {
-//         fetchUser(credentials, function (err, user) {
+//         userService.fetch(credentials, function (err, user) {
 //             if (err) {
 //                 log('error fetching user for credentials', err, credentials);
 //             } else {

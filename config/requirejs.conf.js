@@ -7,7 +7,8 @@ require.config({
     sinon: 'lib/sinonjs/sinon',
     chai: 'node_modules/chai/chai',
     debug: 'lib/debug/debug',
-    json: 'lib/requirejs-plugins/src/json'
+    json: 'lib/requirejs-plugins/src/json',
+    text: 'lib/requirejs-plugins/lib/text'
   },
   packages: [{
     name: 'auth-livefyre',

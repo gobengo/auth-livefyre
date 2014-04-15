@@ -113,6 +113,26 @@ user.isMod({
 });
 ```
 
+## `.permissions`
+
+Deals with reading permissions from Livefyre
+
+### `.permissions.forCollection(token, collection, errback)`
+
+Get permissions for a Livefyre Authentication Token within a Collection.
+
+```javascript
+var permissions = require('auth-livefyre').permissions;
+var collection = {
+    network: 'livefyre.com',
+    siteId: '4',
+    articleId: '169'
+};
+permissions.forCollection('my token', collection, function (err, authorization) {
+    // `authorization` is an instanceof CollectionAuthorization
+});
+```
+
 ## `.createDelegate(serverUrl)`
 
 Create an `auth` delegate object to be passed to `auth.delegate()`.

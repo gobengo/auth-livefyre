@@ -3,22 +3,16 @@
   "code": 200,
   "data": {
     "profile": {
-      "profileUrl": "http:\/\/www.qa-ext.livefyre.com\/profile\/1792689\/",
-      "settingsUrl": "http:\/\/www.qa-ext.livefyre.com\/profile\/edit\/info",
+      "profileUrl": "http:\/\/www.livefyre.com\/profile\/5011\/",
+      "settingsUrl": "http:\/\/www.livefyre.com\/profile\/edit\/info",
       "displayName": "ben",
-      "avatar": "http:\/\/gravatar.com\/avatar\/e23293c6dfc25b86762b045336233add\/?s=50&d=http:\/\/avatars-qa.fyre.co\/a\/anon\/50.jpg",
-      "id": "_up1792689@livefyre.com"
+      "avatar": "http:\/\/avatars.fyre.co\/a\/1\/d627b1ba3fce6ab0af872ed3d65278fd\/50.jpg",
+      "id": "_u2012@livefyre.com"
     },
-    "auth_token": {
-      "value": "SUCH A TOKEN",
-      "ttl": 1418731
-    },
-    "isModAnywhere": true,
     "token": {
-      "value": "NO REALLY ITS VERY TOKENISH",
+      "value": ".TOKEN.",
       "ttl": 2592000
     },
-    "collection_id": "2486695",
     "modScopes": {
       "collections": [
         
@@ -27,17 +21,12 @@
         "livefyre.com"
       ],
       "sites": [
-        
+        "170",
+        "4",
+        "99",
+        "212"
       ]
     },
-    "permissions": {
-      "moderator_key": "45cf917e65f31e6eef",
-      "authors": [
-        {
-          "id": "_up1792689@livefyre.com",
-          "key": "2f2f948f9900f3d32"
-        }
-      ]
-    }
+    "isModAnywhere": true
   }
 }

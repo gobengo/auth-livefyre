@@ -1,9 +1,5 @@
-var authApi = require('./auth-api');
+var defaultAuthApi = require('./auth-api');
 var LivefyreUser = require('./user');
-
-// Use the default authApi, but if you want a custom
-// user-service, you can Object.create and override.
-exports._authApi = authApi;
 
 /**
  * Fetch a User from the Livefyre Auth API
@@ -16,13 +12,30 @@ exports._authApi = authApi;
  * @param {object} opts.authApi a custom AuthApi to use
  */
 exports.fetch = function (opts, errback) {
-    var authApi = this._authApi;
+    var authApi = this._authApi || defaultAuthApi;
     authApi.authenticate(opts, function (err, userInfo) {
+        var authorizations = [];
+        var collectionAuthorization;
         if (err) {
             return errback(err);
         }
         var user = new LivefyreUser();
         authApi.updateUser(user, userInfo);
+        // If collection info was passed, attempt to create a 
+        // CollectionAuthorization from the response
+        if (opts.articleId || opts.collectionId) {
+            collectionAuthorization = authApi.createCollectionAuthorization(opts, userInfo);
+            if (collectionAuthorization) {
+                authorizations.push(collectionAuthorization);
+            }
+        }
+        var networkAuthorizations = authApi.createNetworkAuthorizations(userInfo);
+        if (networkAuthorizations && networkAuthorizations.length > 0) {
+            authorizations.push.apply(authorizations, networkAuthorizations);
+        }
+        if (authorizations.length > 0) {
+            user.authorizations.push.apply(user.authorizations, authorizations);
+        }
         errback(null, user, userInfo);
     });
 };

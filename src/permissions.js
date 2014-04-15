@@ -1,6 +1,7 @@
 'use strict';
 
 var authApi = require('./auth-api');
+var CollectionAuthorization = require('./collection-authorization');
 
 var permissions = module.exports = {};
 
@@ -29,8 +30,6 @@ permissions.forCollection = function (token, collection, errback) {
     });
 };
 
-permissions.CollectionAuthorization = CollectionAuthorization;
-
 function validateCollection(collection) {
     var collectionOpts = ['siteId', 'articleId', 'network'];
     for (var i=0, numOpts=collectionOpts.length; i<numOpts; i++) {
@@ -46,16 +45,4 @@ function collectionOptError(optName, collection) {
     err.collection = collection;
     err.missingOption = optName;
     return err;
-}
-
-/**
- * An Object that holds information
- * about a user's authorization in a Collection
- * @param collection.network {string} Network of Collection
- * @param collection.siteId {string} Site ID of Collection
- * @param collection.articleId {string} Article ID of Collection
- * @param authData {object} data returned from auth API
- */
-function CollectionAuthorization(collection, authData) {
-    this.collection = collection;
 }

@@ -1,5 +1,6 @@
 var base64 = require('base64');
 var jsonp = require('./util/jsonp');
+var CollectionAuthorization = require('./collection-authorization');
 
 /**
  * An Object that can talk to Livefyre's Auth API over HTTP
@@ -120,6 +121,52 @@ authApi.updateUser = function (user, authData) {
     }
 
     user.set(attributes);
+};
+
+/**
+ * Create a CollectionAuthorization from
+ * @param opts {object} opts passed to authApi.authenticate
+ * @param userInfo {object} Response data from authApi
+ */
+authApi.createCollectionAuthorization = function (opts, userInfo) {
+    var collection = {
+        network: opts.network,
+        id: userInfo.collection_id,
+        siteId: opts.siteId,
+        articleId: opts.articleId
+    };
+    var authorization = new CollectionAuthorization(collection);
+    var permissions = userInfo.permissions;
+    var authors = permissions && permissions.authors;
+    if (authors && authors.length > 0) {
+        authorization.authors.push.apply(authorization.authors, authors);
+    }
+    var moderatorKey = permissions && permissions.moderator_key;
+    if (moderatorKey) {
+        authorization.moderatorKey = moderatorKey;
+    }
+    return authorization;
+};
+
+/**
+ * Create a set of network authorizations from
+ * @param userInfo {object} Response data from authApi
+ * @return falsy or Array of objects like {network: 'network', moderator: true}
+ */
+authApi.createNetworkAuthorizations = function (userInfo) {
+    var modScopes = userInfo.modScopes;
+    var networkModScopes = modScopes && modScopes.networks;
+    if ( ! (networkModScopes && networkModScopes.length > 0)) {
+        return;
+    }
+    var networkAuthorizations = networkModScopes.map(function (network) {
+        var authorization = {
+            network: network,
+            moderator: true
+        };
+        return authorization;
+    });
+    return networkAuthorizations;
 };
 
 function extend(destination) {

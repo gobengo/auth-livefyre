@@ -29,7 +29,7 @@ LivefyreDelegate.prototype.login = function(authenticate) {
     var self = this;
     this._popup(function () {
         self.restoreSession(function (err, user) {
-            authenticate(null, {
+            authenticate(err, {
                 livefyre: user
             });
         });

@@ -52,6 +52,23 @@ describe('auth-livefyre/user-service', function () {
                 done(err);
             });
         });
+        it('survives if authApi returns empty 200 response', function (done) {
+            // Patch userService._authApi to return an empty response
+            var emptyUserService = Object.create(userService);
+            emptyUserService._authApi = createMockAuthApi({
+                code: 200,
+                data: {}
+            });
+
+            var opts = {
+                token: labsToken
+            };
+            emptyUserService.fetch(opts, function (err, user) {
+                assert.notOk(user);
+                assert.ok(err);
+                done();
+            });
+        });
         it('fetches Collection authorization too if info is passed', function (done) {
             // Patch userService._authApi to return a response
             // as if we only passed a token, no collection info

@@ -14,9 +14,11 @@ var LivefyreUser = require('./user');
 exports.fetch = function (opts, errback) {
     var authApi = this._authApi || defaultAuthApi;
     authApi.authenticate(opts, function (err, userInfo) {
-        var authorizations = [];
-        var collectionAuthorization;
         if (err) {
+            return errback(err);
+        }
+        if ( ! userInfo.profile) {
+            err = new Error('fetch-user got empty auth response');
             return errback(err);
         }
         var user = new LivefyreUser();

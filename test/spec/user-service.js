@@ -37,9 +37,8 @@ describe('auth-livefyre/user-service', function () {
                 assert.equal(
                     user.get('displayName'),
                     modCollectionResponse.data.profile.displayName);
-                // There will only be a NetworkAuthorization
-                // because no collection
-                assert.equal(user.authorizations.length, 1);
+                // 1 network, 4 sites in mock response
+                assert.equal(user.authorizations.length, 5);
                 // assert.ok(user.isMod({
                 //     network: 'livefyre.com'
                 // }));
@@ -116,6 +115,15 @@ describe('auth-livefyre/user-service', function () {
                 // but you're not a mod of a network not in the response
                 assert.notOk(user.isMod({
                     network: 'fake'
+                }));
+
+                // Or, because the auth response included modScopes
+                // by Site
+                assert.ok(user.isMod({
+                    siteId: modCollectionResponse.data.modScopes.sites[0]
+                }));
+                assert.notOk(user.isMod({
+                    siteId: 'not real site'
                 }));
 
                 done(err);

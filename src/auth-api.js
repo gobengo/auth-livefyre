@@ -169,6 +169,27 @@ authApi.createNetworkAuthorizations = function (userInfo) {
     return networkAuthorizations;
 };
 
+/**
+ * Create a set of site authorizations from
+ * @param userInfo {object} Response data from authApi
+ * @return falsy or Array of objects like {siteId: '125125', moderator: true}
+ */
+authApi.createSiteAuthorizations = function (userInfo) {
+    var modScopes = userInfo.modScopes;
+    var siteModScopes = modScopes && modScopes.sites;
+    if ( ! (siteModScopes && siteModScopes.length > 0)) {
+        return;
+    }
+    var siteAuthorizations = siteModScopes.map(function (siteId) {
+        var authorization = {
+            siteId: siteId,
+            moderator: true
+        };
+        return authorization;
+    });
+    return siteAuthorizations;
+};
+
 function extend(destination) {
     var sources = [].slice.call(arguments, 1);
     var source;

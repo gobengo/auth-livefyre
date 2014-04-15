@@ -29,10 +29,17 @@ exports.fetch = function (opts, errback) {
                 authorizations.push(collectionAuthorization);
             }
         }
+        // Add network authorizations
         var networkAuthorizations = authApi.createNetworkAuthorizations(userInfo);
         if (networkAuthorizations && networkAuthorizations.length > 0) {
             authorizations.push.apply(authorizations, networkAuthorizations);
         }
+        // Add site authorizations
+        var siteAuthorizations = authApi.createSiteAuthorizations(userInfo);
+        if (siteAuthorizations && siteAuthorizations.length > 0) {
+            authorizations.push.apply(authorizations, siteAuthorizations);
+        }
+        // Add authorizations to user.authorizations
         if (authorizations.length > 0) {
             user.authorizations.push.apply(user.authorizations, authorizations);
         }

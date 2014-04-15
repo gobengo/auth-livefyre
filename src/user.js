@@ -138,6 +138,18 @@ function isModByNetwork(networkId) {
     return isMod;
 }
 
+/**
+ * Check if user is known to be a moderator of a given Site ID
+ * @param siteId {string} A Site ID
+ * @return {boolean}
+ */
+function isModBySiteId(siteId) {
+    var isMod = this.authorizations.some(function (authorization) {
+        var authSiteId = authorization.siteId;
+        return authSiteId && authSiteId === siteId && authorization.moderator;
+    });
+    return isMod;
+}
 
 /**
  * @param scope {object} An object which describes the scope you're curious
@@ -154,6 +166,9 @@ LivefyreUser.prototype.isMod = function(scopeObj) {
     }
     if (scopeObj.network) {
         return isModByNetwork.call(this, scopeObj.network);
+    }
+    if (scopeObj.siteId) {
+        return isModBySiteId.call(this, scopeObj.siteId);
     }
     return;
 };

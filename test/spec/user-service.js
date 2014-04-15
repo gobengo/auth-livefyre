@@ -5,6 +5,7 @@ var LivefyreUser = require('auth-livefyre/user');
 
 var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
 
+var bobResponse1 = require('json!auth-livefyre-tests/fixtures/auth-bob-collection-1.json');
 var modResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-auth.json');
 var modCollectionResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-collection-auth.json');
 
@@ -26,22 +27,28 @@ describe('auth-livefyre/user-service', function () {
         it('fetches a LivefyreUser instance', function (done) {
             // Patch userService._authApi to return a response
             // as if we only passed a token, no collection info
-            var modUserService = Object.create(userService);
-            modUserService._authApi = createMockAuthApi(modResponse);
+            var bobUserService = Object.create(userService);
+            bobUserService._authApi = createMockAuthApi(bobResponse1);
 
             var opts = {
                 token: labsToken
             };
-            modUserService.fetch(opts, function (err, user) {
+            bobUserService.fetch(opts, function (err, user) {
                 assert.instanceOf(user, LivefyreUser);
                 assert.equal(
                     user.get('displayName'),
-                    modCollectionResponse.data.profile.displayName);
-                // 1 network, 4 sites in mock response
-                assert.equal(user.authorizations.length, 5);
-                // assert.ok(user.isMod({
-                //     network: 'livefyre.com'
-                // }));
+                    bobResponse1.data.profile.displayName);
+                // 1 network, 1 site, 1 collection
+                assert.equal(user.authorizations.length, 3);
+                assert.ok(user.isMod({
+                    network: '1n'
+                }));
+                assert.ok(user.isMod({
+                    siteId: '1s'
+                }));
+                assert.ok(user.isMod({
+                    collectionId: '1'
+                }));
                 done(err);
             });
         });

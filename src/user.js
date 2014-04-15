@@ -14,26 +14,15 @@ var inherits = require('inherits');
  * @constructor
  */
 function LivefyreUser(initialAttr) {
-    this._attributes = LivefyreUser.getDefaults();
+    this._attributes = {};
     this.authorizations = [];
     EventEmitter.call(this);
 }
 inherits(LivefyreUser, EventEmitter);
 
-/** @return {Object.<string, *>} */
-LivefyreUser.getDefaults = function() {
-    return {
-        'modMap': {},
-        'keys': []
-    };
-};
-
 /** @enum {string} */
 LivefyreUser.EVENTS = {
-    CHANGE: 'change',
-    LOGOUT: 'logout',
-    LOGIN: 'login',
-    LOGIN_REQUESTED: 'loginRequested'
+    CHANGE: 'change'
 };
 
 /**
@@ -119,7 +108,7 @@ function isModByCollectionId(collectionId) {
     var isMod = this.authorizations.some(function (authorization) {
         var collection = authorization.collection;
         return Boolean(authorization.moderatorKey &&
-            collection && 
+            collection &&
             collection.id === collectionId);
     });
     return isMod;

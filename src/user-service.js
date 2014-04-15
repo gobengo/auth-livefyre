@@ -20,29 +20,8 @@ exports.fetch = function (opts, errback) {
             return errback(err);
         }
         var user = new LivefyreUser();
-        authApi.updateUser(user, userInfo);
-        // If collection info was passed, attempt to create a 
-        // CollectionAuthorization from the response
-        if (opts.articleId || opts.collectionId) {
-            collectionAuthorization = authApi.createCollectionAuthorization(opts, userInfo);
-            if (collectionAuthorization) {
-                authorizations.push(collectionAuthorization);
-            }
-        }
-        // Add network authorizations
-        var networkAuthorizations = authApi.createNetworkAuthorizations(userInfo);
-        if (networkAuthorizations && networkAuthorizations.length > 0) {
-            authorizations.push.apply(authorizations, networkAuthorizations);
-        }
-        // Add site authorizations
-        var siteAuthorizations = authApi.createSiteAuthorizations(userInfo);
-        if (siteAuthorizations && siteAuthorizations.length > 0) {
-            authorizations.push.apply(authorizations, siteAuthorizations);
-        }
-        // Add authorizations to user.authorizations
-        if (authorizations.length > 0) {
-            user.authorizations.push.apply(user.authorizations, authorizations);
-        }
+        // Update user and user.authorizations with info
+        authApi.updateUser(user, userInfo, opts);
         errback(null, user, userInfo);
     });
 };

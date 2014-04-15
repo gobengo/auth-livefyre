@@ -3,7 +3,7 @@
  * and sometimes does not work well (even when it should).
  */
 var chai = require('chai');
-var storage = require('auth/util/storage');
+var storage = require('auth-livefyre/util/storage');
 
 describe('auth/util/storage', function() {
 	it('plain set/get/remove', function() {

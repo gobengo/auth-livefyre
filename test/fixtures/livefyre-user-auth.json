@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "code": 200,
+  "data": {
+    "profile": {
+      "profileUrl": "http:\/\/www.qa-ext.livefyre.com\/profile\/1793302\/",
+      "settingsUrl": "http:\/\/www.qa-ext.livefyre.com\/profile\/edit\/info",
+      "displayName": "justbentesting",
+      "avatar": "http:\/\/gravatar.com\/avatar\/14b85dc95bbba75b9228fee15c79c5ef\/?s=50&d=http:\/\/avatars-qa.fyre.co\/a\/anon\/50.jpg",
+      "id": "_up1793302@livefyre.com"
+    },
+    "token": {
+      "value": ".TOKEN.",
+      "ttl": 2592000
+    },
+    "modScopes": {
+      "collections": [
+        
+      ],
+      "networks": [
+        
+      ],
+      "sites": [
+        
+      ]
+    },
+    "isModAnywhere": true
+  }
+}

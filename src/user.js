@@ -14,25 +14,15 @@ var inherits = require('inherits');
  * @constructor
  */
 function LivefyreUser(initialAttr) {
-    this._attributes = LivefyreUser.getDefaults();
+    this._attributes = {};
+    this.authorizations = [];
     EventEmitter.call(this);
 }
 inherits(LivefyreUser, EventEmitter);
 
-/** @return {Object.<string, *>} */
-LivefyreUser.getDefaults = function() {
-    return {
-        'modMap': {},
-        'keys': []
-    };
-};
-
 /** @enum {string} */
 LivefyreUser.EVENTS = {
-    CHANGE: 'change',
-    LOGOUT: 'logout',
-    LOGIN: 'login',
-    LOGIN_REQUESTED: 'loginRequested'
+    CHANGE: 'change'
 };
 
 /**
@@ -91,11 +81,85 @@ LivefyreUser.prototype.isAuthenticated = function() {
 };
 
 /**
- * @param {string} collectionId
+ * Check if user is known to be a moderator of provided Collection info
+ * @param scope {object} An object which describes the scope you're curious
+ *     about isMod. Pass .network, .siteId, .articleID for Collection
+ *     or just .collectionId
  * @return {boolean}
  */
-LivefyreUser.prototype.isMod = function(articleId) {
-    return articleId in this.get('modMap');
+function isModByCollectionInfo(scopeObj) {
+    var isMod = this.authorizations.some(function (authorization) {
+        var collection = authorization.collection;
+        return Boolean(collection &&
+            authorization.moderatorKey &&
+            collection.network === scopeObj.network &&
+            collection.siteId === scopeObj.siteId &&
+            collection.articleId === scopeObj.articleId);
+    });
+    return isMod;
+}
+
+/**
+ * Check if user is known to be a moderator of a given Collection ID
+ * @param collectionId {string} A Collection ID
+ * @return {boolean}
+ */
+function isModByCollectionId(collectionId) {
+    var isMod = this.authorizations.some(function (authorization) {
+        var collection = authorization.collection;
+        return Boolean(authorization.moderatorKey &&
+            collection &&
+            collection.id === collectionId);
+    });
+    return isMod;
+}
+
+/**
+ * Check if user is known to be a moderator of a given Network
+ * @param networkId {string} A Network name
+ * @return {boolean}
+ */
+function isModByNetwork(networkId) {
+    var isMod = this.authorizations.some(function (authorization) {
+        var authNetwork = authorization.network;
+        return authNetwork && authNetwork === networkId && authorization.moderator;
+    });
+    return isMod;
+}
+
+/**
+ * Check if user is known to be a moderator of a given Site ID
+ * @param siteId {string} A Site ID
+ * @return {boolean}
+ */
+function isModBySiteId(siteId) {
+    var isMod = this.authorizations.some(function (authorization) {
+        var authSiteId = authorization.siteId;
+        return authSiteId && authSiteId === siteId && authorization.moderator;
+    });
+    return isMod;
+}
+
+/**
+ * @param scope {object} An object which describes the scope you're curious
+ *     about isMod. Pass .network, .siteId, .articleID for Collection
+ *     or just .collectionId
+ * @return {boolean}
+ */
+LivefyreUser.prototype.isMod = function(scopeObj) {
+    if (scopeObj.collectionId) {
+        return isModByCollectionId.call(this, scopeObj.collectionId);
+    }
+    if (scopeObj.articleId) {
+        return isModByCollectionInfo.call(this, scopeObj);
+    }
+    if (scopeObj.network) {
+        return isModByNetwork.call(this, scopeObj.network);
+    }
+    if (scopeObj.siteId) {
+        return isModBySiteId.call(this, scopeObj.siteId);
+    }
+    return;
 };
 
 /**

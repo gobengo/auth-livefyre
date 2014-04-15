@@ -29,6 +29,110 @@ Note: To create a delegate for a non-production cluster, you'll need to pass the
 require('auth-livefyre').plugin(auth, 'uat.livefyre.com');
 ```
 
+## `.User`
+
+Create a Livefyre User model. It is rare that you'd create this directly.
+Check out `.userService.fetch()`.
+
+```javascript
+var LivefyreUser = require('auth-livefyre').User;
+var user = new LivefyreUser();
+```
+
+Users have attributes that can be get, set, and unset.
+
+### `User#get`
+
+Get an attribute
+
+```javascript
+user.get('id');
+user.get('displayName');
+```
+
+### `User#set`
+
+Set an attribute. This will emit events.
+
+```javascript
+// set with key, val args
+user.set('id', 1);
+// or a key/value map
+user.get({
+    id: 2,
+    displayName: 'ben'
+});
+```
+
+### `User#unset`
+
+Unset an attribute. This will emit a change event.
+
+```javascript
+user.unset('id');
+```
+
+### `User#on`
+
+Users are EventEmitters, and emit 'change' events when attributes change.
+
+```javascript
+// Listen for any change
+user.on('change', function (changes) {
+    // changes is an object of attribute/value pairs
+});
+// Listen for change of a particular attribute
+user.on('change:{attributeName}', function (newValue) {
+    // newValue is the value the attribute was changed to    
+})
+```
+
+### `User#isMod`
+
+Check if a User is known to be a a moderator of a scope.
+returns a Boolean.
+
+```javascript
+// network
+user.isMod({
+    network: 'livefyre.com'
+});
+// siteId
+user.isMod({
+    siteId: '343434'
+});
+// collectionId
+user.isMod({
+    collectionId: '124124124'
+});
+// collection info
+user.isMod({
+    network: 'livefyre.com',
+    siteId: '4',
+    articleId: '169'
+});
+```
+
+## `.permissions`
+
+Deals with reading permissions from Livefyre
+
+### `.permissions.forCollection(token, collection, errback)`
+
+Get permissions for a Livefyre Authentication Token within a Collection.
+
+```javascript
+var permissions = require('auth-livefyre').permissions;
+var collection = {
+    network: 'livefyre.com',
+    siteId: '4',
+    articleId: '169'
+};
+permissions.forCollection('my token', collection, function (err, authorization) {
+    // `authorization` is an instanceof CollectionAuthorization
+});
+```
+
 ## `.createDelegate(serverUrl)`
 
 Create an `auth` delegate object to be passed to `auth.delegate()`.
@@ -44,9 +148,14 @@ auth.delegate(livefyreAuthDelegate);
 auth.login();
 ```
 
-## `.fetchUser(credentials, errback)`
+## `.userService`
 
-Fetch a LivefyreUser from the AuthAPI.
+Manages Users via Livefyre Auth API
+
+### `.fetch(credentials, errback)`
+
+Fetch a LivefyreUser from the AuthAPI. If you pass collection info in your
+credentials, the User will be made with the right collectionAuthorizations.
 
 ```javascript
 var livefyreAuth = require('auth-livefyre');
@@ -58,11 +167,6 @@ livefyreAuth.fetchUser(authCredentials, function (err, user, userInfo) {
     // do
 });
 ```
-
-## `.User`
-
-Create a Livefyre User model. It is rare that you'd create this directly.
-Check out `.fetchUser()`.
 
 ## `.api`
 

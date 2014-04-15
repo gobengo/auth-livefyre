@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "code": 200,
+  "data": {
+    "profile": {
+      "profileUrl": "http:\/\/www.livefyre.com\/profile\/5011\/",
+      "settingsUrl": "http:\/\/www.livefyre.com\/profile\/edit\/info",
+      "displayName": "ben",
+      "avatar": "http:\/\/avatars.fyre.co\/a\/1\/d627b1ba3fce6ab0af872ed3d65278fd\/50.jpg",
+      "id": "_u2012@livefyre.com"
+    },
+    "token": {
+      "value": ".TOKEN.",
+      "ttl": 2592000
+    },
+    "modScopes": {
+      "collections": [
+        
+      ],
+      "networks": [
+        "livefyre.com"
+      ],
+      "sites": [
+        "170",
+        "4",
+        "99",
+        "212"
+      ]
+    },
+    "isModAnywhere": true
+  }
+}

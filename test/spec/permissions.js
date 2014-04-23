@@ -1,18 +1,18 @@
-var permissions = require('auth-livefyre/permissions');
+var permissions = require('livefyre-auth/permissions');
 var assert = require('chai').assert;
-var authApi = require('auth-livefyre/auth-api');
-var CollectionAuthorization = require('auth-livefyre/collection-authorization');
+var authApi = require('livefyre-auth/auth-api');
+var CollectionAuthorization = require('livefyre-auth/collection-authorization');
 
 var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
 
-var mockAuthResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-auth.json');
+var mockAuthResponse = require('json!livefyre-auth-tests/fixtures/livefyre-admin-auth.json');
 var mockAuthApi = createMockAuthApi(mockAuthResponse);
 
 // permissions shouldn't actually make API requests
 permissions = Object.create(permissions);
 permissions._authApi = mockAuthApi;
 
-describe('auth-livefyre/permissions', function () {
+describe('livefyre-auth/permissions', function () {
     describe('.forCollection', function (){
 
         it('is a function', function () {

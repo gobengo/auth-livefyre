@@ -4,7 +4,7 @@ var auth = require('auth');
 var plugin = require('./auth-plugin');
 
 /*
-auth-livefyre
+livefyre-auth
 */
 plugin(auth);
 module.exports = exports = auth;

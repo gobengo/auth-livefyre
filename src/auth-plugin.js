@@ -1,5 +1,5 @@
 var userService = require('./user-service');
-var log = require('debug')('auth-livefyre/auth-plugin');
+var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
 var LivefyreUser = require('./user');
 

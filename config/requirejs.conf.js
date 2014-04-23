@@ -11,10 +11,10 @@ require.config({
     text: 'lib/requirejs-plugins/lib/text'
   },
   packages: [{
-    name: 'auth-livefyre',
+    name: 'livefyre-auth',
     location: 'src'
   },{
-    name: 'auth-livefyre-tests',
+    name: 'livefyre-auth-tests',
     location: 'test'
   },{
     name: 'auth',

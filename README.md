@@ -1,7 +1,8 @@
 # Livefyre Auth
 
-`auth-livefyre` provides a series of modules for helping with Authentication
-in Livefyre-powered Applications.
+`livefyre-auth` is an extension of `auth` with added modules to authenticate with Livefyre StreamHub Auth APIs in Livefyre-powered Apps.
+
+Livefyre Component developers should use this. `auth` is Livefyre-agnositc.
 
 ## `.plugin(auth)`
 

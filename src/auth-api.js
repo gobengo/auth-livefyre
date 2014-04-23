@@ -232,7 +232,11 @@ function qsParam(key, value) {
 }
 
 function networkFromToken (token) {
-    var tokenJSON = base64.atob(token.split('.')[1]);
+    var jwtParts = token.split('.');
+    if (jwtParts.length !== 3) {
+        throw new Error("The provided lftoken is not a JWT: "+token);
+    }
+    var tokenJSON = base64.atob(jwtParts[1]);
     var tokenData = JSON.parse(tokenJSON);
     var network = tokenData.domain;
     return network;

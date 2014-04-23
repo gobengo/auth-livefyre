@@ -8,7 +8,7 @@
   include: ['almond'],
   out: '../dist/livefyre-auth.min.js',
   preserveLicenseComments: false,
-  optimize: 'none',
+  optimize: 'uglify2',
   cjsTranslate: true,
   uglify2: {
     compress: {

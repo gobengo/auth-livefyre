@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var auth = require('auth');
 var plugin = require('./auth-plugin');

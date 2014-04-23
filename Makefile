@@ -7,6 +7,10 @@ build: node_modules
 dist: node_modules config
 	./node_modules/requirejs/bin/r.js -o ./config/build.conf.js
 
+version:
+	./node_modules/.bin/json -E 'this.version="$(v)"' -f package.json -I
+	./node_modules/.bin/json -E 'this.version="$(v)"' -f bower.json -I
+
 # if package.json changes, install
 node_modules: package.json
 	npm install
@@ -27,7 +31,7 @@ testb: build
 clean:
 	rm -rf node_modules lib dist
 
-package: build
+package: dist
 
 run: server
 

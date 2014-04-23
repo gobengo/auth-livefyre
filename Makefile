@@ -4,6 +4,9 @@ all: build
 
 build: node_modules
 
+dist: node_modules config
+	./node_modules/requirejs/bin/r.js -o ./config/build.conf.js
+
 # if package.json changes, install
 node_modules: package.json
 	npm install

@@ -3,12 +3,12 @@
   paths: {
     almond: 'lib/almond/almond'
   },
-  baseUrl: '.',
-  name: 'auth',
+  baseUrl: '..',
+  name: 'livefyre-auth',
   include: ['almond'],
-  out: 'dist/auth.min.js',
+  out: '../dist/livefyre-auth.min.js',
   preserveLicenseComments: false,
-  optimize: 'uglify2',
+  optimize: 'none',
   cjsTranslate: true,
   uglify2: {
     compress: {
@@ -17,8 +17,8 @@
     mangle: true
   },
   wrap: {
-    startFile: 'tools/wrap-start.frag',
-    endFile: 'tools/wrap-end.frag'
+    startFile: 'wrap-start.frag',
+    endFile: 'wrap-end.frag'
   },
   generateSourceMaps: true
 })

@@ -26,7 +26,6 @@
     "karma-mocha-debug": "^0.1.2"
   },
   "scripts": {
-    "build": "./node_modules/requirejs/bin/r.js -o ./build.conf.js",
     "hint": "./node_modules/jshint/bin/jshint src/ test/spec/; echo",
     "postinstall": "./node_modules/bower/bin/bower install",
     "start": "./node_modules/http-server/bin/http-server",

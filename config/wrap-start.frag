@@ -15,12 +15,7 @@
         //result to a property on the global.
         var f = factory();
         root.Livefyre = root.Livefyre || {};
- 
-        for (var module in f) {
-            if (f.hasOwnProperty(module)) {
-                root.Livefyre[module] = f[module];
-            }
-        }
+        root.Livefyre['auth'] = f;
     }
 }(this, function () {
     //almond, and your modules will be inlined here

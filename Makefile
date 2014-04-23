@@ -25,7 +25,7 @@ testb: build
 	./node_modules/karma/bin/karma start --browsers=Chrome
 
 clean:
-	rm -rf node_modules
+	rm -rf node_modules lib dist
 
 package: build
 
@@ -36,3 +36,8 @@ server: build
 	
 lint: build
 	./node_modules/jshint/bin/jshint src
+
+env=dev
+deploy: dist
+	./node_modules/.bin/lfcdn -e $(env)
+

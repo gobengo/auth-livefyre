@@ -1,6 +1,5 @@
-var livefyreAuth = require('auth-livefyre');
 var userService = require('./user-service');
-var log = require('debug')('auth-livefyre/auth-plugin');
+var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
 var LivefyreUser = require('./user');
 
@@ -20,8 +19,6 @@ var LivefyreUser = require('./user');
  *     network on a non-production cluster
  */
 module.exports = function (auth, serverUrl) {
-    auth.livefyre = livefyreAuth;
-
     function login(user) {
         auth.login({ livefyre: user });
     }
@@ -59,7 +56,6 @@ module.exports = function (auth, serverUrl) {
                 return;
             }
             session.save(userInfo, user);
-            auth.livefyre.user = user;
             login(user);
         });
     });

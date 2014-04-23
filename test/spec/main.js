@@ -1,8 +1,11 @@
-var livefyreAuth = require('auth-livefyre');
+var livefyreAuth = require('livefyre-auth');
 var assert = require('chai').assert;
 
-describe('auth-livefyre', function () {
+describe('livefyre-auth', function () {
     it('is truthy', function (){
         assert(livefyreAuth);
+    });
+    it('has a delegate method', function () {
+        assert.typeOf(livefyreAuth.delegate, 'function');
     });
 });

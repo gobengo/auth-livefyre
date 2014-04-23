@@ -1,14 +1,14 @@
 var assert = require('chai').assert;
 
-var authApi = require('auth-livefyre/auth-api');
-var LivefyreUser = require('auth-livefyre/user');
+var authApi = require('livefyre-auth/auth-api');
+var LivefyreUser = require('livefyre-auth/user');
 
 var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
 
-var modResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-auth.json');
-var modCollectionResponse = require('json!auth-livefyre-tests/fixtures/livefyre-admin-collection-auth.json');
-var bobResponse1 = require('json!auth-livefyre-tests/fixtures/auth-bob-collection-1.json');
-var bobResponse2 = require('json!auth-livefyre-tests/fixtures/auth-bob-collection-2.json');
+var modResponse = require('json!livefyre-auth-tests/fixtures/livefyre-admin-auth.json');
+var modCollectionResponse = require('json!livefyre-auth-tests/fixtures/livefyre-admin-collection-auth.json');
+var bobResponse1 = require('json!livefyre-auth-tests/fixtures/auth-bob-collection-1.json');
+var bobResponse2 = require('json!livefyre-auth-tests/fixtures/auth-bob-collection-2.json');
 
 
 // Make a mock api that always returns the same response
@@ -20,7 +20,7 @@ function createMockAuthApi (response) {
     return mockAuthApi;
 }
 
-describe('auth-livefyre/auth-api', function () {
+describe('livefyre-auth/auth-api', function () {
     it('is an object', function () {
         assert.typeOf(authApi, 'object');
     });

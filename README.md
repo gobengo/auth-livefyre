@@ -1,7 +1,8 @@
 # Livefyre Auth
 
-`auth-livefyre` provides a series of modules for helping with Authentication
-in Livefyre-powered Applications.
+`livefyre-auth` is an extension of `auth` with added modules to authenticate with Livefyre StreamHub Auth APIs in Livefyre-powered Apps.
+
+Livefyre Component developers should use this. `auth` is Livefyre-agnositc.
 
 ## `.plugin(auth)`
 
@@ -19,14 +20,14 @@ It will also load a user from session on page load, and clear the session
 on `auth` `logout` events.
 
 ```javascript
-require('auth-livefyre').plugin(auth);
+require('livefyre-auth').plugin(auth);
 ```
 
 Note: To create a delegate for a non-production cluster, you'll need to pass the
 `serverUrl` as a second parameter to `.plugin`
 
 ```javascript
-require('auth-livefyre').plugin(auth, 'uat.livefyre.com');
+require('livefyre-auth').plugin(auth, 'uat.livefyre.com');
 ```
 
 ## `.User`
@@ -35,7 +36,7 @@ Create a Livefyre User model. It is rare that you'd create this directly.
 Check out `.userService.fetch()`.
 
 ```javascript
-var LivefyreUser = require('auth-livefyre').User;
+var LivefyreUser = require('livefyre-auth').User;
 var user = new LivefyreUser();
 ```
 
@@ -122,7 +123,7 @@ Deals with reading permissions from Livefyre
 Get permissions for a Livefyre Authentication Token within a Collection.
 
 ```javascript
-var permissions = require('auth-livefyre').permissions;
+var permissions = require('livefyre-auth').permissions;
 var collection = {
     network: 'livefyre.com',
     siteId: '4',
@@ -140,7 +141,7 @@ This will configure auth to be controlled by Livefyre.com accounts and profiles.
 Livefyre Enterprise customers will rarely use this.
 
 ```javascript
-var livefyreAuthDelegate = require('auth-livefyre').createDelegate('http://livefyre.com');
+var livefyreAuthDelegate = require('livefyre-auth').createDelegate('http://livefyre.com');
 
 auth.delegate(livefyreAuthDelegate);
 
@@ -158,7 +159,7 @@ Fetch a LivefyreUser from the AuthAPI. If you pass collection info in your
 credentials, the User will be made with the right collectionAuthorizations.
 
 ```javascript
-var livefyreAuth = require('auth-livefyre');
+var livefyreAuth = require('livefyre-auth');
 var authCredentials = {
     serverUrl: 'http://livefyre.com',
     token: 'lol'
@@ -176,7 +177,7 @@ Use `.updateUser(user, data)` to update a LivefyreUser
 from the auth api response data
 
 ```javascript
-var authApi = require('auth-livefyre').api;
+var authApi = require('livefyre-auth').api;
 
 authApi(opts, function (err, userInfo) {
     if (err) {

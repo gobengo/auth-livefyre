@@ -1,9 +1,9 @@
 var authModule = require('auth');
-var livefyreAuthPlugin = require('auth-livefyre/auth-plugin');
+var livefyreAuthPlugin = require('livefyre-auth/auth-plugin');
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-describe('auth-livefyre/auth-plugin', function () {
+describe('livefyre-auth/auth-plugin', function () {
     var auth;
     beforeEach(function () {
         auth = authModule.create();

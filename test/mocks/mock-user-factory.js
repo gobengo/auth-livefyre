@@ -1,6 +1,6 @@
-var mockAuthResponse = require('json!auth-livefyre-tests/mocks/auth-response.json');
-var authApi = require('auth-livefyre/auth-api')
-var LivefyreUser = require('auth-livefyre/user');
+var mockAuthResponse = require('json!livefyre-auth-tests/mocks/auth-response.json');
+var authApi = require('livefyre-auth/auth-api')
+var LivefyreUser = require('livefyre-auth/user');
 
 var MockUserFactory = function () {
 };

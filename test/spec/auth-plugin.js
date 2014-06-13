@@ -1,5 +1,6 @@
 var authModule = require('auth');
 var livefyreAuthPlugin = require('livefyre-auth/auth-plugin');
+var LivefyreUser = require('livefyre-auth/user');
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
@@ -26,7 +27,7 @@ describe('livefyre-auth/auth-plugin', function () {
             done();
         });
         auth.authenticate({
-            livefyre: token
+            livefyre: new LivefyreUser()
         });
     });
 });

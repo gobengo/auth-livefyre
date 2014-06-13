@@ -1,3 +1,4 @@
+var authApi = require('./auth-api');
 var userService = require('./user-service');
 var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
@@ -9,7 +10,7 @@ var LivefyreUser = require('./user');
  * * authenticate the creds by requesting the Auth API
  * * Create a LivefyreUser if authenticated
  * * Call `auth.login({ livefyre: user })`
- * 
+ *
  * It will also load users from session initially, and clear the session
  * on auth 'logout' events
  *
@@ -24,8 +25,10 @@ module.exports = function (auth, serverUrl) {
     }
 
     // Load user from existing session
-    var sessionUser = session.get();
-    if (sessionUser) {
+    var sessionData = session.get();
+    if (sessionData) {
+        // We save the raw data from the auth api
+        var sessionUser = authApi.updateUser(new LivefyreUser(), sessionData);
         login(sessionUser);
     }
 

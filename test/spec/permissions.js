@@ -1,16 +1,9 @@
 var permissions = require('livefyre-auth/permissions');
 var assert = require('chai').assert;
 var authApi = require('livefyre-auth/auth-api');
-var CollectionAuthorization = require('livefyre-auth/collection-authorization');
+var sinon = require('sinon');
 
 var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
-
-var mockAuthResponse = require('json!livefyre-auth-tests/fixtures/livefyre-admin-auth.json');
-var mockAuthApi = createMockAuthApi(mockAuthResponse);
-
-// permissions shouldn't actually make API requests
-permissions = Object.create(permissions);
-permissions._authApi = mockAuthApi;
 
 describe('livefyre-auth/permissions', function () {
     describe('.forCollection', function (){
@@ -19,19 +12,26 @@ describe('livefyre-auth/permissions', function () {
             assert.typeOf(permissions.forCollection, 'function');
         });
 
-        it('gets a CollectionAuthorization when passed token and collectionInfo', function (done) {
+        it('fetches from the auth api when passed a token and collectionInfo', function (done) {
             var collectionInfo = {
                 network: 'labs.fyre.co',
                 siteId: '315833',
                 articleId: 'custom-1386874785082'
             };
-            permissions.forCollection(labsToken, collectionInfo, function (err, perms) {
-                assert.instanceOf(perms, CollectionAuthorization);
-                
-                // assert.ok(perms.isModAnywhere);
-                // assert.ok(perms.modScopes);
-                // assert.ok(perms.permissions);
-                done(err);
+            var spy = sinon.spy(authApi, 'authenticate');
+            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
+                // no mock request, so no dataz
+                assert.instanceOf(err, Error);
+
+                assert(spy.called);
+                var opts = spy.args[0][0];
+                assert.equal(opts.token, labsToken);
+                assert.equal(opts.network, collectionInfo.network);
+                assert.equal(opts.siteId, collectionInfo.siteId);
+                assert.equal(opts.articleId, collectionInfo.articleId);
+
+                spy.restore();
+                done();
             });
         });
 
@@ -48,12 +48,3 @@ describe('livefyre-auth/permissions', function () {
         });
     });
 });
-
-// Make a mock api that always returns the same response
-function createMockAuthApi (response) {
-    var mockAuthApi = Object.create(authApi);
-    mockAuthApi._request = function (url, errback) {
-        errback(null, response);
-    };
-    return mockAuthApi;
-}

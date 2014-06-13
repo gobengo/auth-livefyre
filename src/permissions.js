@@ -5,11 +5,10 @@ var CollectionAuthorization = require('./collection-authorization');
 
 var permissions = module.exports = {};
 
-permissions._authApi = authApi;
 
 /**
- * Fetch permissions for a Livefyre Collection
- * @param token {string} lftoken of user you want permissions for
+ * Fetch a user's permissions for a Livefyre Collection
+ * @param token {string|object} usertoken
  * @param collection.network {string} Network of Collection
  * @param collection.siteId {string} Site ID of Collection
  * @param collection.articleId {string} Article ID of Collection
@@ -17,16 +16,20 @@ permissions._authApi = authApi;
  */
 permissions.forCollection = function (token, collection, errback) {
     validateCollection(collection);
-
     var opts = Object.create(collection);
     opts.token = token;
 
-    this._authApi.authenticate(opts, function (err, resp) {
+    authApi.authenticate(opts, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
-        var authorization = new CollectionAuthorization(collection, resp);
-        errback(null, authorization);
+        // bad, duplicated from user-service
+        if ( ! userInfo.profile) {
+            err = new Error('fetch-user got empty auth response');
+            return errback(err);
+        }
+
+        errback(null, userInfo);
     });
 };
 

@@ -91,7 +91,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     var tokenExpiresAt = tokenDescriptor && new Date((+new Date()) + tokenDescriptor.ttl * 1000);
     var collectionId = userInfo['collection_id'];
     var collectionAuthorization;
-    
+
     var attributes = extend({}, profile, {
         token: token,
         tokenExpiresAt: tokenExpiresAt
@@ -140,6 +140,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     if (uniqueAuthorizations.length > 0) {
         user.authorizations.push.apply(user.authorizations, uniqueAuthorizations);
     }
+    return user;
 };
 
 /**

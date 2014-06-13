@@ -1,6 +1,4 @@
 var storage = require('./util/storage');
-var LivefyreUser = require('./user');
-var authApi = require('./auth-api');
 
 // Used for the data from last request to auth api
 var AUTH_COOKIE_KEY = 'fyre-auth';
@@ -20,10 +18,7 @@ var session = module.exports = {
         if ( ! cookieData.token) {
             return null;
         }
-        var user = new LivefyreUser();
-        // We save the raw data from the auth api
-        authApi.updateUser(user, cookieData);
-        return user;
+        return cookieData;
     },
     /**
      * Save a new session for userInfo you provide

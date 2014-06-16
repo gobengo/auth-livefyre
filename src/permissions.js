@@ -1,15 +1,14 @@
 'use strict';
 
 var authApi = require('./auth-api');
-var CollectionAuthorization = require('./collection-authorization');
+var session = require('./session');
 
 var permissions = module.exports = {};
 
-permissions._authApi = authApi;
 
 /**
- * Fetch permissions for a Livefyre Collection
- * @param token {string} lftoken of user you want permissions for
+ * Fetch a user's permissions for a Livefyre Collection
+ * @param token {string} usertoken
  * @param collection.network {string} Network of Collection
  * @param collection.siteId {string} Site ID of Collection
  * @param collection.articleId {string} Article ID of Collection
@@ -17,16 +16,59 @@ permissions._authApi = authApi;
  */
 permissions.forCollection = function (token, collection, errback) {
     validateCollection(collection);
-
     var opts = Object.create(collection);
     opts.token = token;
 
-    this._authApi.authenticate(opts, function (err, resp) {
+    authApi.authenticate(opts, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
-        var authorization = new CollectionAuthorization(collection, resp);
-        errback(null, authorization);
+        // bad, duplicated from user-service
+        if ( ! userInfo.profile) {
+            err = new Error('fetch-user got empty auth response');
+            return errback(err);
+        }
+
+        errback(null, userInfo);
+    });
+};
+
+/**
+ * Get the eref keys for a user and for the specified collection.
+ * @param collection {Collection}
+ * @param errback {function(?Error, Array)}
+ */
+permissions.getKeys = function (user, collection, errback) {
+    var authorization = user.getAuthorizationByCollectionId(collection.id);
+
+    function collKeyset(authorization) {
+        var authorKeys = authorization.authors.map(function(authorObj) {
+            return authorObj.key;
+        });
+        if (authorization.moderatorKey) {
+            return authorKeys.concat([authorization.moderatorKey]);
+        }
+        return authorKeys;
+    }
+
+    if (authorization) {
+        return errback(null, collKeyset(authorization));
+    }
+
+    // user has not yet fetched permissions for this collection, get them now!11
+    permissions.forCollection(user.token, collection, function (err, userInfo) {
+        if (err) {
+            return errback(err);
+        }
+
+        // update the user for the future
+        authApi.updateUser(user, userInfo);
+
+        // save the session for the far future
+        session.save(userInfo, user);
+
+        authorization = user.getAuthorizationByCollectionId(collection.id);
+        errback(null, collKeyset(authorization));
     });
 };
 

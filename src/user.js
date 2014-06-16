@@ -105,14 +105,27 @@ function isModByCollectionInfo(scopeObj) {
  * @return {boolean}
  */
 function isModByCollectionId(collectionId) {
-    var isMod = this.authorizations.some(function (authorization) {
-        var collection = authorization.collection;
-        return Boolean(authorization.moderatorKey &&
-            collection &&
-            collection.id === collectionId);
-    });
-    return isMod;
+    var authorization = this.getAuthorizationByCollectionId(collectionId);
+    return Boolean(authorization && authorization.moderatorKey);
 }
+
+/**
+ * @param collectionId {string} A Collection ID
+ * @return {CollectionAuthorization}
+ */
+LivefyreUser.prototype.getAuthorizationByCollectionId = function(collectionId) {
+    var authorization;
+    var collection;
+    for (var i = 0; i < this.authorizations.length; i++) {
+        authorization = this.authorizations[i];
+        collection = authorization.collection;
+        if (collection &&
+            collection.id === collectionId) {
+            return authorization;
+        }
+    }
+    return null;
+};
 
 /**
  * Check if user is known to be a moderator of a given Network

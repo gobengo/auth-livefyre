@@ -15,7 +15,7 @@ describe('livefyre-auth/permissions', function () {
             assert.typeOf(permissions.forCollection, 'function');
         });
 
-        it('fetches from the auth api when passed a token and collectionInfo', function (done) {
+        it('fetches from the auth api when passed a token and collectionInfo (and fails)', function (done) {
             var collectionInfo = {
                 network: 'labs.fyre.co',
                 siteId: '315833',
@@ -34,6 +34,22 @@ describe('livefyre-auth/permissions', function () {
                 assert.equal(opts.articleId, collectionInfo.articleId);
 
                 spy.restore();
+                done();
+            });
+        });
+
+        it('fetches from the auth api when passed a token and collectionInfo (and succeeds)', function (done) {
+            var collectionInfo = {
+                network: 'labs.fyre.co',
+                siteId: '315833',
+                articleId: 'custom-1386874785082'
+            };
+            var stub = sinon.stub(authApi, 'authenticate', function (opts, errback) {
+                errback(null, JSON.parse(mockAuthResp).data);
+            });
+            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
+                assert.equal(userInfo.auth_token.value, JSON.parse(mockAuthResp).data.auth_token.value);
+                stub.restore();
                 done();
             });
         });

@@ -1,4 +1,3 @@
-var authApi = require('./auth-api');
 var userService = require('./user-service');
 var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
@@ -18,17 +17,19 @@ var LivefyreUser = require('./user');
  * @param [serverUrl] {string} The Livefyre host that is serving up auth.
  *     This should only need to be provided if you're using the 'livefyre.com'
  *     network on a non-production cluster
+ * @param opts {Object}
+ * @param opts.userService {Object} Specify an alternate user service
  */
-module.exports = function (auth, serverUrl) {
+module.exports = function (auth, serverUrl, opts) {
+    opts = opts || {};
+    userService = opts.userService || userService;
     function login(user) {
         auth.login({ livefyre: user });
     }
 
     // Load user from existing session
-    var sessionData = session.get();
-    if (sessionData) {
-        // We save the raw data from the auth api
-        var sessionUser = authApi.updateUser(new LivefyreUser(), sessionData);
+    var sessionUser = session.get();
+    if (sessionUser) {
         login(sessionUser);
     }
 

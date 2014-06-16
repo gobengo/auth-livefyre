@@ -1,7 +1,6 @@
 'use strict';
 
 var authApi = require('./auth-api');
-var CollectionAuthorization = require('./collection-authorization');
 var session = require('./session');
 
 var permissions = module.exports = {};

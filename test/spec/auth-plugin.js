@@ -27,7 +27,6 @@ describe('livefyre-auth/auth-plugin', function () {
     });
     it('logs the user into livefyre once authenticated (w/ user obj)', function (done) {
         auth.on('login.livefyre', function (user) {
-            var userToken = user.get('token');
             assert(user);
             assert.equal(auth.get('livefyre'), user);
             done();
@@ -39,7 +38,6 @@ describe('livefyre-auth/auth-plugin', function () {
     it('logs the user into livefyre once authenticated (w/ token)', function (done) {
         var token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
         auth.on('login.livefyre', function (user) {
-            var userToken = user.get('token');
             assert(user);
             assert.equal(auth.get('livefyre'), user);
             done();

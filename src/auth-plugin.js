@@ -1,4 +1,4 @@
-var userService = require('./user-service');
+var userServiceModule = require('./user-service');
 var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
 var LivefyreUser = require('./user');
@@ -22,7 +22,7 @@ var LivefyreUser = require('./user');
  */
 module.exports = function (auth, serverUrl, opts) {
     opts = opts || {};
-    userService = opts.userService || userService;
+    var userService = opts.userService || userServiceModule;
     function login(user) {
         auth.login({ livefyre: user });
     }

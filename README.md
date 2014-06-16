@@ -129,8 +129,18 @@ var collection = {
     siteId: '4',
     articleId: '169'
 };
-permissions.forCollection('my token', collection, function (err, authorization) {
-    // `authorization` is an instanceof CollectionAuthorization
+permissions.forCollection('my token', collection, function (err, userInfo) {
+    // `userInfo` has data specific to the user in the context of the collection.
+});
+```
+
+### `.permissions.getKeys(user, collection, errback)`
+
+Get the user's keys for this collection, in order to decrypt erefs etc.
+
+```javascript
+permissions.getKeys(user, collection, function (err, keys) {
+    // `keys` is an array of valid decryption keys.
 });
 ```
 

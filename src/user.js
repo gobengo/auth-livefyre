@@ -6,11 +6,8 @@
  * This should be assumed to be a global singleton.
  */
 
-var authApi = require('./auth-api');
 var EventEmitter = require('event-emitter');
 var inherits = require('inherits');
-var permissions = require('./permissions');
-var session = require('./session');
 
 /**
  * @param {Object} initialAttr
@@ -108,7 +105,7 @@ function isModByCollectionInfo(scopeObj) {
  * @return {boolean}
  */
 function isModByCollectionId(collectionId) {
-    var authorization = getAuthorizationByCollectionId.call(this, collectionId);
+    var authorization = this.getAuthorizationByCollectionId(collectionId);
     return Boolean(authorization && authorization.moderatorKey);
 }
 
@@ -116,7 +113,7 @@ function isModByCollectionId(collectionId) {
  * @param collectionId {string} A Collection ID
  * @return {CollectionAuthorization}
  */
-function getAuthorizationByCollectionId(collectionId) {
+LivefyreUser.prototype.getAuthorizationByCollectionId = function(collectionId) {
     var authorization;
     var collection;
     for (var i = 0; i < this.authorizations.length; i++) {
@@ -128,7 +125,7 @@ function getAuthorizationByCollectionId(collectionId) {
         }
     }
     return null;
-}
+};
 
 /**
  * Check if user is known to be a moderator of a given Network
@@ -176,47 +173,6 @@ LivefyreUser.prototype.isMod = function(scopeObj) {
         return isModBySiteId.call(this, scopeObj.siteId);
     }
     return;
-};
-
-/**
- * Get the erefs keys for this user and for the specified collection.
- * @param collection {Collection}
- * @param errback {function(?Error, Array)}
- */
-LivefyreUser.prototype.getKeys = function (collection, errback) {
-    var authorization = getAuthorizationByCollectionId.call(this, collection.id);
-    var user = this;
-
-    function collKeyset(authorization) {
-        var authorKeys = authorization.authors.map(function(authorObj) {
-            return authorObj.key;
-        });
-        if (authorization.moderatorKey) {
-            // TODO(jj): ie8 compat for 'map' and 'some'
-            return authorKeys.concat([authorization.moderatorKey]);
-        }
-        return authorKeys;
-    }
-
-    if (authorization) {
-        return errback(null, collKeyset(authorization));
-    }
-
-    // user has not yet fetched permissions for this collection, get them now!11
-    permissions.forCollection(user.token, collection, function (err, userInfo) {
-        if (err) {
-            return errback(err);
-        }
-
-        // update the user for the future
-        authApi.updateUser(user, userInfo);
-
-        // save the session for the far future
-        session.save(userInfo, user);
-
-        authorization = getAuthorizationByCollectionId.call(user, collection.id);
-        errback(null, collKeyset(authorization));
-    });
 };
 
 /**

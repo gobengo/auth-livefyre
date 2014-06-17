@@ -14,6 +14,6 @@
     "inherits": "git://github.com/Livefyre/inherits.git",
     "debug": "visionmedia/debug#~0.7.4",
     "js-md5": "~1.1.0",
-    "auth": "Livefyre/auth#~0.0.4"
+    "auth": "Livefyre/auth#~0.1.0"
   }
 }

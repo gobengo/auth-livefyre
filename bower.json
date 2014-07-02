@@ -1,10 +1,11 @@
 {
   "name": "livefyre-auth",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "dist/livefyre-auth.min.js",
   "devDependencies": {
     "almond": "0.2.6",
     "cajon": "git@github.com:requirejs/cajon.git#~0.1.11",
+    "Livefyre.js": "git@github.com:Livefyre/Livefyre.js.git",
     "requirejs-plugins": "~1.0.2",
     "sinonjs": "~1.7.3"
   },
@@ -14,6 +15,11 @@
     "inherits": "git://github.com/Livefyre/inherits.git",
     "debug": "visionmedia/debug#~0.7.4",
     "js-md5": "~1.1.0",
-    "auth": "Livefyre/auth#~0.1.0"
+    "auth": "Livefyre/auth#~0.2.0"
+  },
+  "resolutions": {
+    "event-emitter": "~0.1.0",
+    "auth": "0.2.0",
+    "view": "~1.1"
   }
 }

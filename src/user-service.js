@@ -22,6 +22,8 @@ exports.fetch = function (opts, errback) {
             return errback(err);
         }
         var user = new LivefyreUser();
+        // Store the serverUrl
+        userInfo.serverUrl = opts.serverUrl;
         // Update user and user.authorizations with info
         authApi.updateUser(user, userInfo, opts);
         errback(null, user, userInfo);

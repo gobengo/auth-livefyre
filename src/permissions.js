@@ -8,18 +8,21 @@ var permissions = module.exports = {};
 
 /**
  * Fetch a user's permissions for a Livefyre Collection
- * @param token {string} usertoken
+ * @param token {string} user token
  * @param collection.network {string} Network of Collection
  * @param collection.siteId {string} Site ID of Collection
  * @param collection.articleId {string} Article ID of Collection
+ * @param opts {Object}
+ * @param opts.serverUrl {string}
  * @throws Error if you didn't pass all required Collection info
  */
-permissions.forCollection = function (token, collection, errback) {
+permissions.forCollection = function (token, collection, opts, errback) {
     validateCollection(collection);
-    var opts = Object.create(collection);
-    opts.token = token;
+    var apiOpts = Object.create(collection);
+    apiOpts.token = token;
+    apiOpts.serverUrl = opts.serverUrl;
 
-    authApi.authenticate(opts, function (err, userInfo) {
+    authApi.authenticate(apiOpts, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
@@ -28,6 +31,8 @@ permissions.forCollection = function (token, collection, errback) {
             err = new Error('fetch-user got empty auth response');
             return errback(err);
         }
+        // Store the serverUrl
+        userInfo.serverUrl = opts.serverUrl;
 
         errback(null, userInfo);
     });
@@ -56,7 +61,7 @@ permissions.getKeys = function (user, collection, errback) {
     }
 
     // user has not yet fetched permissions for this collection, get them now!11
-    permissions.forCollection(user.get('token'), collection, function (err, userInfo) {
+    permissions.forCollection(user.get('token'), collection, { serverUrl: user.get('serverUrl') }, function (err, userInfo) {
         if (err) {
             return errback(err);
         }

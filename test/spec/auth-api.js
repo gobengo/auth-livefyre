@@ -75,6 +75,14 @@ describe('livefyre-auth/auth-api', function () {
             }));
         });
 
+        it('can save serverUrl data', function () {
+            var modifiedData = Object.create(bobData1);
+            modifiedData.serverUrl = 'server this';
+            var user = createUser();
+            authApi.updateUser(user, modifiedData);
+            assert.equal(user.get('serverUrl'), modifiedData.serverUrl);
+        });
+
         it('can update existing user to add authorizations', function () {
             var user = createUser();
             authApi.updateUser(user, bobData1);

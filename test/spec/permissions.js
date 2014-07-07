@@ -21,19 +21,21 @@ describe('livefyre-auth/permissions', function () {
                 siteId: '315833',
                 articleId: 'custom-1386874785082'
             };
-            var spy = sinon.spy(authApi, 'authenticate');
-            permissions.forCollection(labsToken, collectionInfo, {}, function (err, userInfo) {
-                // no mock request, so no dataz
+            var stub = sinon.stub(authApi, 'authenticate', function(opts, cb) {
+                cb(new Error());
+            });
+            permissions.forCollection(labsToken, collectionInfo, { serverUrl: 'serve this' }, function (err, userInfo) {
                 assert.instanceOf(err, Error);
 
-                assert(spy.called);
-                var opts = spy.args[0][0];
+                assert(stub.called);
+                var opts = stub.args[0][0];
                 assert.equal(opts.token, labsToken);
                 assert.equal(opts.network, collectionInfo.network);
                 assert.equal(opts.siteId, collectionInfo.siteId);
                 assert.equal(opts.articleId, collectionInfo.articleId);
+                assert.equal(opts.serverUrl, 'serve this');
 
-                spy.restore();
+                stub.restore();
                 done();
             });
         });

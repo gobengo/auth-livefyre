@@ -31,7 +31,8 @@ describe('livefyre-auth/user-service', function () {
             bobUserService._authApi = createMockAuthApi(bobResponse1);
 
             var opts = {
-                token: labsToken
+                token: labsToken,
+                serverUrl: 'serve this'
             };
             bobUserService.fetch(opts, function (err, user) {
                 assert.instanceOf(user, LivefyreUser);
@@ -49,6 +50,7 @@ describe('livefyre-auth/user-service', function () {
                 assert.ok(user.isMod({
                     collectionId: '1'
                 }));
+                assert.equal(user.get('serverUrl'), opts.serverUrl);
                 done(err);
             });
         });
@@ -111,7 +113,7 @@ describe('livefyre-auth/user-service', function () {
                 // The author for my authenticating token was saved
                 var lfAuthor = authors[0];
                 assert.equal(lfAuthor.id, modCollectionResponse.data.permissions.authors[0].id);
-                
+
                 // If you are a moderator of the Collection, your key is saved
                 // as authorization.moderatorKey
                 assert.equal(collectionAuthorization.moderatorKey, modCollectionResponse.data.permissions.moderator_key);

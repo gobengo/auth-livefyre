@@ -85,7 +85,7 @@ describe('livefyre-auth/permissions', function () {
                 key: 'batmobile'
             }];
             user = new LivefyreUser();
-            user.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
+            user.set('token', 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY');
             user.authorizations.push(authorization);
             permissionsSpy = sinon.spy(permissions, 'forCollection');
         });
@@ -117,7 +117,7 @@ describe('livefyre-auth/permissions', function () {
                 assert.instanceOf(err, Error);
                 assert(permissionsSpy.called);
                 var args = permissionsSpy.args[0];
-                assert.equal(args[0], user.token);
+                assert.equal(args[0], user.get('token'));
                 assert.deepEqual(args[1], collection);
                 done();
             });

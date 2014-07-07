@@ -93,6 +93,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     var collectionAuthorization;
 
     var attributes = extend({}, profile, {
+        serverUrl: userInfo.serverUrl,
         token: token,
         tokenExpiresAt: tokenExpiresAt
     });

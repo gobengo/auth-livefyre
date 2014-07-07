@@ -22,7 +22,7 @@ describe('livefyre-auth/permissions', function () {
                 articleId: 'custom-1386874785082'
             };
             var spy = sinon.spy(authApi, 'authenticate');
-            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
+            permissions.forCollection(labsToken, collectionInfo, {}, function (err, userInfo) {
                 // no mock request, so no dataz
                 assert.instanceOf(err, Error);
 
@@ -47,7 +47,7 @@ describe('livefyre-auth/permissions', function () {
             var stub = sinon.stub(authApi, 'authenticate', function (opts, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
-            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
+            permissions.forCollection(labsToken, collectionInfo, {}, function (err, userInfo) {
                 assert.equal(userInfo.auth_token.value, JSON.parse(mockAuthResp).data.auth_token.value);
                 stub.restore();
                 done();
@@ -124,7 +124,7 @@ describe('livefyre-auth/permissions', function () {
         });
         it('fetches permissions if there is no authorization for the collection (and succeeds)', function (done) {
             permissionsSpy.restore();
-            var permissionStub = sinon.stub(permissions, 'forCollection', function(blah, bleh, errback) {
+            var permissionStub = sinon.stub(permissions, 'forCollection', function(blah, bleh, blarg, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
             user.authorizations = [];

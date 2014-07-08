@@ -2,89 +2,86 @@
  * @fileoverview More than just stub! Here we check if Livefyre auth is on the page. If it is, we use it.
  * If it isn't, then we fetch Livefyre.js and in set up a proxy/queue to the incoming Livefyre auth.
  */
-var authInterface = require('lib/auth/src/contrib/auth-interface');
+var authInterface = require('auth/contrib/auth-interface');
 var getScript = require('../util/get-script');
 
-var internal = {};
-internal.hazAuth = false;
-internal.pendingCalls = [];
-internal.auth = {};
+exports.hazAuth = false;
+exports.pendingCalls = [];
+exports.auth = {};
 
 /**
  * Has auth arrived? We check that Livefyre.js is on the page, since it haz auth.
  */
-internal.authHasArrived = function() {
+exports.authHasArrived = function() {
     return window.Livefyre && window.Livefyre['_lfjs'] === true;
 }
 
 /**
  * Flush the pending calls now that auth has arrived
  */
-internal.flushPendingCalls = function() {
+exports.flushPendingCalls = function() {
     var methodCall;
-    for (var i = 0; i < internal.pendingCalls.length; i++) {
-        methodCall = internal.pendingCalls[i];
-        internal.auth[methodCall[0]].apply(internal.auth, methodCall[1]);
+    for (var i = 0; i < exports.pendingCalls.length; i++) {
+        methodCall = exports.pendingCalls[i];
+        exports.auth[methodCall[0]].apply(exports.auth, methodCall[1]);
     }
-    internal.pendingCalls = [];
+    exports.pendingCalls = [];
 }
 
 /**
  * Proxy a call to Livefyre auth
  * @param {string} methodName
  */
-internal.proxyCall = function(methodName) {
+exports.proxyCall = function(methodName) {
     var args = Array.prototype.slice.call(arguments, 1);
-    if (internal.hazAuth) {
-        return internal.auth[methodName].apply(internal.auth, args);
+    if (exports.hazAuth) {
+        return exports.auth[methodName].apply(exports.auth, args);
     }
-    internal.pendingCalls.push([methodName, args]);
+    exports.pendingCalls.push([methodName, args]);
 }
 
 /**
  * Load Scout to Load LivefyreJS + Auth
  */
-internal.getLivefyreJS = function() {
+exports.getLivefyreJS = function() {
     getScript.req('//cdn.livefyre.com/Livefyre.js', function () {
-        window.Livefyre.on('initialized', internal.handleAuthHasArrived);
+        window.Livefyre.on('initialized', exports.handleAuthHasArrived);
     });
 }
 
 /**
  * Proxy all public auth methods so that they can be invoked before auth is actually on the page.
  */
-internal.getAuth = function() {
+exports.getAuth = function() {
     var methodName;
     for (var i = authInterface.length - 1; i >= 0; i--) {
         methodName = authInterface[i];
-        internal.auth[methodName] = internal.proxyCall.bind(internal.auth, methodName);
+        exports.auth[methodName] = exports.proxyCall.bind(exports.auth, methodName);
     }
 
     // If we don't have auth, fetch Livefyre.js
-    if (internal.authHasArrived()) {
-        internal.handleAuthHasArrived();
+    if (exports.authHasArrived()) {
+        exports.handleAuthHasArrived();
     } else {
-        internal.getLivefyreJS();
+        exports.getLivefyreJS();
     }
 
-    return internal.auth;
+    return exports.auth;
 }
 
 /**
  * Yay auth is here!
  */
-internal.handleAuthHasArrived = function() {
+exports.handleAuthHasArrived = function() {
     window.Livefyre.require(['auth'], function (authModule) {
-        internal.auth = authModule;
-        internal.hazAuth = true;
-        internal.flushPendingCalls();
+        exports.auth = authModule;
+        exports.hazAuth = true;
+        exports.flushPendingCalls();
         // we need to fake a login b/c we might have a session user
         // and the event listeners just lost a race as they registered after auth initialized.
-        var session = internal.auth.get();
+        var session = exports.auth.get();
         if (session) {
-            internal.auth.login(session);
+            exports.auth.login(session);
         }
     });
 }
-
-module.exports = internal;

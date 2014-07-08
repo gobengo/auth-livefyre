@@ -24,13 +24,15 @@ describe('livefyre-auth/permissions', function () {
             var stub = sinon.stub(authApi, 'authenticate', function(opts, cb) {
                 cb(new Error());
             });
-            permissions.forCollection(labsToken, collectionInfo, { serverUrl: 'serve this' }, function (err, userInfo) {
+            var user = new LivefyreUser();
+            user.set('serverUrl', 'serve this');
+            user.set('token', labsToken);
+            permissions.forCollection(user, collectionInfo, function (err, userInfo) {
                 assert.instanceOf(err, Error);
 
                 assert(stub.called);
                 var opts = stub.args[0][0];
                 assert.equal(opts.token, labsToken);
-                assert.equal(opts.network, collectionInfo.network);
                 assert.equal(opts.siteId, collectionInfo.siteId);
                 assert.equal(opts.articleId, collectionInfo.articleId);
                 assert.equal(opts.serverUrl, 'serve this');
@@ -49,7 +51,7 @@ describe('livefyre-auth/permissions', function () {
             var stub = sinon.stub(authApi, 'authenticate', function (opts, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
-            permissions.forCollection(labsToken, collectionInfo, {}, function (err, userInfo) {
+            permissions.forCollection(new LivefyreUser(), collectionInfo, function (err, userInfo) {
                 assert.equal(userInfo.auth_token.value, JSON.parse(mockAuthResp).data.auth_token.value);
                 stub.restore();
                 done();
@@ -61,8 +63,8 @@ describe('livefyre-auth/permissions', function () {
                 var collection = {
                     siteId: '111'
                 };
-                permissions.forCollection(labsToken, collection, function () {
-                    // Should get here because collection is invalid
+                permissions.forCollection(new LivefyreUser(), collection, function () {
+                    // Shouldn't get here because collection is invalid
                 });
             }
             assert.throws(doWithInvalidCollection);
@@ -119,14 +121,14 @@ describe('livefyre-auth/permissions', function () {
                 assert.instanceOf(err, Error);
                 assert(permissionsSpy.called);
                 var args = permissionsSpy.args[0];
-                assert.equal(args[0], user.get('token'));
-                assert.deepEqual(args[1], collection);
+                assert.equal(args[0], user);
+                assert.equal(args[1], collection);
                 done();
             });
         });
         it('fetches permissions if there is no authorization for the collection (and succeeds)', function (done) {
             permissionsSpy.restore();
-            var permissionStub = sinon.stub(permissions, 'forCollection', function(blah, bleh, blarg, errback) {
+            var permissionStub = sinon.stub(permissions, 'forCollection', function(user, collection, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
             user.authorizations = [];

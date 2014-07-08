@@ -9,11 +9,19 @@ var permissions = module.exports = {};
 /**
  * Fetch a user's permissions for a Livefyre Collection
  * @param user {User} user
+ * @param collection {Collection}
+ * @param collection.network {string} Network of Collection
+ * @param collection.siteId {string} Site ID of Collection
+ * @param collection.articleId {string} Article ID of Collection
+ * @throws Error if you didn't pass all required Collection info
  */
-permissions.forUser = function (user, errback) {
+permissions.forCollection = function (user, collection, errback) {
+    validateCollection(collection);
     var opts = {};
     opts.token = user.get('token');
     opts.serverUrl = user.get('serverUrl');
+    opts.siteId = collection.siteId;
+    opts.articleId = collection.articleId;
 
     authApi.authenticate(opts, function (err, userInfo) {
         if (err) {
@@ -55,7 +63,7 @@ permissions.getKeys = function (user, collection, errback) {
     }
 
     // user has not yet fetched permissions for this collection, get them now!11
-    permissions.forUser(user, function (err, userInfo) {
+    permissions.forCollection(user, collection, function (err, userInfo) {
         if (err) {
             return errback(err);
         }
@@ -70,3 +78,20 @@ permissions.getKeys = function (user, collection, errback) {
         errback(null, collKeyset(authorization));
     });
 };
+
+function validateCollection(collection) {
+    var collectionOpts = ['siteId', 'articleId', 'network'];
+    for (var i=0, numOpts=collectionOpts.length; i<numOpts; i++) {
+        var optName = collectionOpts[i];
+        if ( ! collection[optName]) {
+            throw collectionOptError(optName, collection);
+        }
+    }
+}
+
+function collectionOptError(optName, collection) {
+    var err = new Error("Missing Collection option "+optName);
+    err.collection = collection;
+    err.missingOption = optName;
+    return err;
+}

@@ -2,7 +2,7 @@
  * @fileoverview More than just stub! Here we check if Livefyre auth is on the page. If it is, we use it.
  * If it isn't, then we fetch Livefyre.js and in set up a proxy/queue to the incoming Livefyre auth.
  */
-var authInterface = require('lib/auth/src/contrib/auth-interface');
+var authInterface = require('auth/contrib/auth-interface');
 var getScript = require('../util/get-script');
 
 exports.hazAuth = false;

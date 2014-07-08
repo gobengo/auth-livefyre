@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 var auth = require('auth');
 var sinon = require('sinon');
 var authLater = require('livefyre-auth/contrib/auth-later-internal');
-var authInterface = require('lib/auth/src/contrib/auth-interface');
+var authInterface = require('auth/contrib/auth-interface');
 var getScript = require('livefyre-auth/util/get-script');
 
 describe('livefyre-auth/contrib/auth-later', function() {

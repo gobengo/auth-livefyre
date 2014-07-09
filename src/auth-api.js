@@ -1,6 +1,7 @@
 var base64 = require('base64');
-var jsonp = require('./util/jsonp');
 var CollectionAuthorization = require('./collection-authorization');
+var map = require('mout/array/map');
+var jsonp = require('./util/jsonp');
 
 /**
  * An Object that can talk to Livefyre's Auth API over HTTP
@@ -180,7 +181,7 @@ authApi.createNetworkAuthorizations = function (userInfo) {
     if ( ! (networkModScopes && networkModScopes.length > 0)) {
         return [];
     }
-    var networkAuthorizations = networkModScopes.map(function (network) {
+    var networkAuthorizations = map(networkModScopes, function (network) {
         var authorization = {
             network: network,
             moderator: true
@@ -201,7 +202,7 @@ authApi.createSiteAuthorizations = function (userInfo) {
     if ( ! (siteModScopes && siteModScopes.length > 0)) {
         return [];
     }
-    var siteAuthorizations = siteModScopes.map(function (siteId) {
+    var siteAuthorizations = map(siteModScopes, function (siteId) {
         var authorization = {
             siteId: siteId,
             moderator: true

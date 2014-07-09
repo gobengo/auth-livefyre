@@ -4,6 +4,7 @@ require.config({
     'event-emitter': 'lib/event-emitter/src/event-emitter',
     inherits: 'lib/inherits/inherits',
     md5: 'lib/js-md5/js/md5',
+    mout: 'lib/mout/src',
     sinon: 'lib/sinonjs/sinon',
     chai: 'node_modules/chai/chai',
     debug: 'lib/debug/debug',

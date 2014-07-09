@@ -1,6 +1,7 @@
-var storage = require('./util/storage');
-var LivefyreUser = require('./user');
 var authApi = require('./auth-api');
+var clone = require('mout/lang/deepClone');
+var LivefyreUser = require('./user');
+var storage = require('./util/storage');
 
 // Used for the data from last request to auth api
 var AUTH_COOKIE_KEY = 'fyre-auth';
@@ -31,11 +32,7 @@ var session = module.exports = {
      * @param [user] A LivefyreUser model you've already created
      */
     save: function (userInfo, user) {
-        // Pluck all values from userInfo to new object
-        var toCache = Object.keys(userInfo).reduce(function (toCache, key) {
-            toCache[key] = userInfo[key];
-            return toCache;
-        }, {});
+        var toCache = deepClone(userInfo);
         var tokenObj = userInfo['token'];
         var tokenExpiresAt = (+new Date()) + tokenObj['ttl'] * 1000;
 

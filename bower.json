@@ -15,7 +15,8 @@
     "inherits": "git://github.com/Livefyre/inherits.git",
     "debug": "visionmedia/debug#~0.7.4",
     "js-md5": "~1.1.0",
-    "auth": "Livefyre/auth#~0.2.0"
+    "auth": "Livefyre/auth#~0.2.0",
+    "mout": "~0.9.1"
   },
   "resolutions": {
     "event-emitter": "~0.1.0",

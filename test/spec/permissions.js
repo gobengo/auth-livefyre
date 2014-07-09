@@ -117,12 +117,17 @@ describe('livefyre-auth/permissions', function () {
         });
         it('fetches permissions if there is no authorization for the collection (and fails)', function (done) {
             user.authorizations = [];
+            permissionsSpy.restore();
+            var permissionStub = sinon.stub(permissions, 'forCollection', function(user, collection, errback) {
+                errback(new Error());
+            });
             permissions.getKeys(user, collection, function(err, keys) {
                 assert.instanceOf(err, Error);
-                assert(permissionsSpy.called);
-                var args = permissionsSpy.args[0];
+                assert(permissionStub.called);
+                var args = permissionStub.args[0];
                 assert.equal(args[0], user);
                 assert.equal(args[1], collection);
+                permissionStub.restore();
                 done();
             });
         });

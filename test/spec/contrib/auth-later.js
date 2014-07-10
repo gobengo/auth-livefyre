@@ -1,5 +1,4 @@
 var assert = require('chai').assert;
-var auth = require('auth');
 var sinon = require('sinon');
 var authLater = require('livefyre-auth/contrib/auth-later-internal');
 var authInterface = require('auth/contrib/auth-interface');
@@ -37,10 +36,16 @@ describe('livefyre-auth/contrib/auth-later', function() {
     });
 
     describe('.proxyCall("get")', function () {
+        var mockAuth = {
+            get: function () {
+                return '';
+            }
+        };
+
         before(function () {
             window.Livefyre = {
                 require: function (deps, cb) {
-                    cb(auth);
+                    cb(mockAuth);
                 },
                 _lfjs: true
             };
@@ -51,7 +56,7 @@ describe('livefyre-auth/contrib/auth-later', function() {
         });
 
         it('proxies to the real implementation', function (done) {
-            var getSpy = sinon.spy(auth, 'get');
+            var getSpy = sinon.spy(mockAuth, 'get');
             var later = authLater.getAuth();
             later.get('woah');
             setTimeout(function () {

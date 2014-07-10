@@ -4,6 +4,7 @@
  */
 var authInterface = require('auth/contrib/auth-interface');
 var getScript = require('../util/get-script');
+var bind = require('mout/function/bind');
 
 exports.hazAuth = false;
 exports.pendingCalls = [];
@@ -56,7 +57,7 @@ exports.getAuth = function() {
     var methodName;
     for (var i = authInterface.length - 1; i >= 0; i--) {
         methodName = authInterface[i];
-        exports.auth[methodName] = exports.proxyCall.bind(exports.auth, methodName);
+        exports.auth[methodName] = bind(exports.proxyCall, exports.auth, methodName);
     }
 
     // If we don't have auth, fetch Livefyre.js

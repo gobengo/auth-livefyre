@@ -1,7 +1,8 @@
 var base64 = require('base64');
 var CollectionAuthorization = require('./collection-authorization');
-var map = require('mout/array/map');
+var filter = require('mout/array/filter');
 var jsonp = require('./util/jsonp');
+var map = require('mout/array/map');
 
 /**
  * An Object that can talk to Livefyre's Auth API over HTTP
@@ -125,7 +126,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     // Add all authorizations to user
     // TODO: Don't push duplicates...
     // Filter newAuthorizations to only include those who aren't duplicates
-    var uniqueAuthorizations = newAuthorizations.filter(function (authorization) {
+    var uniqueAuthorizations = filter(newAuthorizations, function (authorization) {
         if (authorization.network) {
             return ! user.isMod({ network: authorization.network });
         }

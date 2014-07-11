@@ -15,7 +15,7 @@ exports.auth = {};
  */
 exports.authHasArrived = function() {
     return window.Livefyre && window.Livefyre['_lfjs'] === true;
-}
+};
 
 /**
  * Flush the pending calls now that auth has arrived
@@ -27,7 +27,7 @@ exports.flushPendingCalls = function() {
         exports.auth[methodCall[0]].apply(exports.auth, methodCall[1]);
     }
     exports.pendingCalls = [];
-}
+};
 
 /**
  * Proxy a call to Livefyre auth
@@ -39,7 +39,7 @@ exports.proxyCall = function(methodName) {
         return exports.auth[methodName].apply(exports.auth, args);
     }
     exports.pendingCalls.push([methodName, args]);
-}
+};
 
 /**
  * Load Scout to Load LivefyreJS + Auth
@@ -48,7 +48,7 @@ exports.getLivefyreJS = function() {
     getScript.req('//cdn.livefyre.com/Livefyre.js', function () {
         window.Livefyre.on('initialized', exports.handleAuthHasArrived);
     });
-}
+};
 
 /**
  * Proxy all public auth methods so that they can be invoked before auth is actually on the page.
@@ -68,7 +68,7 @@ exports.getAuth = function() {
     }
 
     return exports.auth;
-}
+};
 
 /**
  * Yay auth is here!
@@ -85,4 +85,4 @@ exports.handleAuthHasArrived = function() {
             exports.auth.login(session);
         }
     });
-}
+};

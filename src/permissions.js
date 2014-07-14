@@ -1,6 +1,7 @@
 'use strict';
 
 var authApi = require('./auth-api');
+var map = require('mout/array/map');
 var session = require('./session');
 
 var permissions = module.exports = {};
@@ -49,7 +50,7 @@ permissions.getKeys = function (user, collection, errback) {
     var authorization = user.getAuthorizationByCollectionId(collection.id);
 
     function collKeyset(authorization) {
-        var authorKeys = authorization.authors.map(function(authorObj) {
+        var authorKeys = map(authorization.authors, function(authorObj) {
             return authorObj.key;
         });
         if (authorization.moderatorKey) {

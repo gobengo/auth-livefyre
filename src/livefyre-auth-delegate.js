@@ -1,5 +1,6 @@
 // auth delegate to log in with your Livefyre.com account
 
+var adapters = require('./auth-adapters');
 var jsonp = require('./util/jsonp');
 var storage = require('./util/storage');
 var userAgent = navigator.userAgent;
@@ -9,8 +10,6 @@ var IS_OPERA = userAgent.indexOf('Opera') > -1;
 var session = require('./session');
 
 /**
- * @param {string} articleId
- * @param {string} siteId
  * @param {string} serverUrl
  * @constructor
  * @extends {BaseDelegate}

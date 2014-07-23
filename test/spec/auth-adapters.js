@@ -1,11 +1,13 @@
+var assert = require('chai').assert;
 var auth = require('auth');
 var authAdapters = require('livefyre-auth/auth-adapters');
-var assert = require('chai').assert;
 var expect = require('chai').expect;
 var LivefyreUser = require('livefyre-auth/user');
+var mockAuthResponse = require('json!livefyre-auth-tests/mocks/auth-response.json');
 var MockUserFactory = require('livefyre-auth-tests/mocks/mock-user-factory');
 var mockUserFactory = new MockUserFactory();
 var sinon = require('sinon');
+
 
 function getMockOldDelegate() {
     return {
@@ -113,18 +115,13 @@ describe('annotations/adapters/auth-delegates', function() {
             };
             var newDelegate = authAdapters.oldToNew(betaDelegate, 123, 456);
             auth.delegate(newDelegate);
-            var remoteLoginSpy = sinon.spy(auth, 'authenticate');
+            var remoteLoginSpy = sinon.spy(auth, 'login');
             auth.login();
-            cb({
-                token:{
-                    value: 'tokenator'
-                }
-            });
+            cb(mockAuthResponse);
 
             expect(remoteLoginSpy).to.be.calledOnce;
-            var spyData = remoteLoginSpy.getCall(0).args[0];
+            var spyData = remoteLoginSpy.getCall(1).args[0];
             expect(spyData.livefyre).to.be.an.instanceof(LivefyreUser);
-            expect(spyData.livefyre.get('token')).to.equal('tokenator');
 
             remoteLoginSpy.restore();
         });
@@ -277,7 +274,7 @@ describe('annotations/adapters/auth-delegates', function() {
             auth.delegate(newDelegate);
 
             expect(loginByCookieSpy).to.be.calledOnce;
-            expect(loginByCookieSpy.getCall(0).args.length).to.equal(0);
+            expect(loginByCookieSpy.getCall(0).args.length).to.equal(1);
         });
 
         it('binds to old delegate user token changes', function() {
@@ -299,7 +296,7 @@ describe('annotations/adapters/auth-delegates', function() {
             };
             var newDelegate = authAdapters.oldToNew(oldDelegate, 123, 456, 'test.fyre.co');
             auth.delegate(newDelegate);
-            var remoteLoginSpy = sinon.spy(auth, 'authenticate');
+            var remoteLoginSpy = sinon.spy(auth, 'login');
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;
@@ -319,7 +316,7 @@ describe('annotations/adapters/auth-delegates', function() {
             };
             var newDelegate = authAdapters.oldToNew(oldDelegate, 123, 456, 'test.fyre.co');
             auth.delegate(newDelegate);
-            var remoteLoginSpy = sinon.spy(auth, 'authenticate');
+            var remoteLoginSpy = sinon.spy(auth, 'login');
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;
@@ -334,7 +331,7 @@ describe('annotations/adapters/auth-delegates', function() {
             };
             var newDelegate = authAdapters.oldToNew(oldDelegate, 123, 456, 'test.fyre.co', 'qa.fyre.co');
             auth.delegate(newDelegate);
-            var remoteLoginSpy = sinon.spy(auth, 'authenticate');
+            var remoteLoginSpy = sinon.spy(auth, 'login');
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;

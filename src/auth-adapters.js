@@ -123,10 +123,6 @@ function adaptOldDelegate(delegate) {
         handleChangeToken(token);
     });
 
-    if (!fyre.conv.ready.hasFired()) {
-        fyre.conv.ready.trigger();
-    }
-
     if (fyre.conv.user.id) {
         if (!auth.get('livefyre')) {
             handleChangeToken(fyre.conv.user.get('token'));

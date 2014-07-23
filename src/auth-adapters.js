@@ -72,30 +72,47 @@ function adaptBetaDelegate(delegate) {
     var newDelegate = {};
     var Livefyre = window.Livefyre;
 
+    function callbackHandler(callback, args) {
+        if (typeof callback === 'function') {
+            callback.apply(this, null, args);
+        }
+    }
+
+    function handleLogin(userInfo) {
+        var user = new LivefyreUser();
+        // Store the serverUrl
+        // TODO(jj): I am kicking myself due to this pattern of copying around the serverUrl
+        // b/c it has become spaghetti code
+        userInfo.serverUrl = delegate.serverUrl;
+        user = authApi.updateUser(user, userInfo);
+        auth.login({
+            livefyre: user
+        });
+    }
+
+    function handleLogout() {
+        auth.emit('logout');
+    }
+
+    Livefyre.user.on('login', handleLogin);
+    Livefyre.user.on('logout', handleLogout);
+
     newDelegate.login = (function () {
         var originalFn = delegate.login;
-        return function () {
+        return function (callback) {
             originalFn.call(delegate);
             Livefyre.user.once('login', function (userInfo) {
-                var user = new LivefyreUser();
-                // Store the serverUrl
-                // TODO(jj): I am kicking myself due to this pattern of copying around the serverUrl
-                // b/c it has become spaghetti code
-                userInfo.serverUrl = delegate.serverUrl;
-                user = authApi.updateUser(user, userInfo);
-                auth.login({
-                    livefyre: user
-                });
+                callbackHandler(callback, [userInfo]);
             });
         };
     })();
 
     newDelegate.logout = (function () {
         var originalFn = delegate.logout;
-        return function (done) {
+        return function (callback) {
             originalFn.call(delegate);
             Livefyre.user.once('logout', function () {
-                done();
+                callbackHandler(callback);
             });
         };
     })();
@@ -104,24 +121,28 @@ function adaptBetaDelegate(delegate) {
 
     newDelegate.editProfile = bind(delegate.editProfile, delegate);
 
+    newDelegate.destroy = function () {
+        Livefyre.user.removeListener('login', handleLogin);
+        Livefyre.user.removeListener('logout', handleLogout);
+        delegate.destroy();
+    };
+
     return newDelegate;
 }
 
 function adaptOldDelegate(delegate) {
     var fyre = window.fyre;
 
-    function handleChangeToken(token) {
+    function handleChangeToken(user, token) {
         if (!token) {
-            return auth.logout();
+            return auth.emit('logout');
         }
         auth.login({
             livefyre: session.get()
         });
     }
 
-    fyre.conv.user.on('change:token', function (user, token) {
-        handleChangeToken(token);
-    });
+    fyre.conv.user.on('change:token', handleChangeToken);
 
     if (fyre.conv.user.id) {
         if (!auth.get('livefyre')) {
@@ -133,22 +154,35 @@ function adaptOldDelegate(delegate) {
         success: function () {},
         failure: function () {}
     };
+    function callbackHandler(callback) {
+        return {
+            success: function () {
+                if (typeof callback === 'function') {
+                    callback.apply(this, null, arguments);
+                }
+            },
+            failure: function () {
+                if (typeof callback === 'function') {
+                    callback.apply(this, arguments);
+                }
+            }
+        };
+    }
     var slice = Array.prototype.slice;
 
     var newDelegate = {};
 
     newDelegate.login = (function () {
         var originalFn = delegate.login;
-        return function () {
-            originalFn.call(delegate, handler);
+        return function (callback) {
+            originalFn.call(delegate, callbackHandler(callback));
         };
     })();
 
     newDelegate.logout = (function () {
         var originalFn = delegate.logout;
-        return function (done) {
-            originalFn.call(delegate);
-            done();
+        return function (callback) {
+            originalFn.call(delegate, callbackHandler(callback));
         };
     })();
 
@@ -169,6 +203,10 @@ function adaptOldDelegate(delegate) {
             originalFn.apply(delegate, args);
         };
     })();
+
+    newDelegate.destroy = function () {
+        fyre.conv.user.off('change:token', handleChangeToken);
+    };
 
     delegate.loginByCookie(handler);
 

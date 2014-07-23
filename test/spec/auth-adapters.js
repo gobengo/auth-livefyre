@@ -108,7 +108,7 @@ describe('annotations/adapters/auth-delegates', function() {
             loginSpy.restore();
         });
 
-        it('authenticates with the correct collection and auth endpoint', function() {
+        it('authenticates with the correct collection and auth endpoint', function(done) {
             var cb;
             window.Livefyre.user.once = function (ev, callback) {
                 cb = callback;
@@ -116,12 +116,10 @@ describe('annotations/adapters/auth-delegates', function() {
             var newDelegate = authAdapters.oldToNew(betaDelegate, 123, 456);
             auth.delegate(newDelegate);
             var remoteLoginSpy = sinon.spy(auth, 'login');
-            auth.login();
+            auth.login(function() {
+                done();
+            });
             cb(mockAuthResponse);
-
-            expect(remoteLoginSpy).to.be.calledOnce;
-            var spyData = remoteLoginSpy.getCall(1).args[0];
-            expect(spyData.livefyre).to.be.an.instanceof(LivefyreUser);
 
             remoteLoginSpy.restore();
         });

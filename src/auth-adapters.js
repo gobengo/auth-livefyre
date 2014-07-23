@@ -83,7 +83,7 @@ function adaptBetaDelegate(delegate) {
                 // b/c it has become spaghetti code
                 userInfo.serverUrl = delegate.serverUrl;
                 user = authApi.updateUser(user, userInfo);
-                auth.authenticate({
+                auth.login({
                     livefyre: user
                 });
             });
@@ -114,7 +114,7 @@ function adaptOldDelegate(delegate) {
         if (!token) {
             return auth.logout();
         }
-        auth.authenticate({
+        auth.login({
             livefyre: session.get()
         });
     }
@@ -174,7 +174,7 @@ function adaptOldDelegate(delegate) {
         };
     })();
 
-    delegate.loginByCookie();
+    delegate.loginByCookie(handler);
 
     return newDelegate;
 }

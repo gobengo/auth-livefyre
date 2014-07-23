@@ -1,5 +1,6 @@
 var auth = require('auth');
 var authAdapters = require('livefyre-auth/auth-adapters');
+var assert = require('chai').assert;
 var expect = require('chai').expect;
 var LivefyreUser = require('livefyre-auth/user');
 var MockUserFactory = require('livefyre-auth-tests/mocks/mock-user-factory');
@@ -302,8 +303,6 @@ describe('annotations/adapters/auth-delegates', function() {
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;
-            var spyData = remoteLoginSpy.getCall(0).args[0];
-            expect(spyData.livefyre.token).to.equal('tokenator');
 
             var logoutSpy = sinon.spy(auth, 'logout');
             cb(null);
@@ -324,8 +323,6 @@ describe('annotations/adapters/auth-delegates', function() {
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;
-            var spyData = remoteLoginSpy.getCall(0).args[0];
-            expect(spyData.livefyre.token).to.equal('tokenator');
 
             remoteLoginSpy.restore();
         });
@@ -341,8 +338,6 @@ describe('annotations/adapters/auth-delegates', function() {
             cb({}, 'tokenator');
 
             expect(remoteLoginSpy).to.be.calledOnce;
-            var spyData = remoteLoginSpy.getCall(0).args[0];
-            expect(spyData.livefyre.token).to.equal('tokenator');
 
             remoteLoginSpy.restore();
         });

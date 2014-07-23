@@ -6,6 +6,7 @@ var auth = require('auth');
 var authApi = require('./auth-api');
 var bind = require('mout/function/bind');
 var LivefyreUser = require('./user');
+var session = require('./session');
 
 /**
  * @typedef {Object} OldAuthDelegate
@@ -114,9 +115,7 @@ function adaptOldDelegate(delegate) {
             return auth.logout();
         }
         auth.authenticate({
-            livefyre: {
-                token: token
-            }
+            livefyre: session.get()
         });
     }
 

@@ -80,8 +80,10 @@ module.exports = function (auth, serverUrl, opts) {
     // if fyre.conv auth is here then use it
     if (window.fyre && window.fyre.conv && typeof fyre.conv.ready === 'function') {
         fyre.conv.ready(function () {
-            var delegate = fyre.conv.getDelegate();
-            auth.delegate(delegate);
+            if (typeof fyre.conv.getDelegate === 'function') {
+                var delegate = fyre.conv.getDelegate();
+                auth.delegate(delegate);
+            }
         });
     }
 };

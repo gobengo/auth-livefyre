@@ -76,6 +76,14 @@ module.exports = function (auth, serverUrl, opts) {
             orig.call(auth, delegate);
         };
     })(auth.delegate);
+
+    // if fyre.conv auth is here then use it
+    if (window.fyre && window.fyre.conv && typeof fyre.conv.ready === 'function') {
+        fyre.conv.ready(function () {
+            var delegate = fyre.conv.getDelegate();
+            auth.delegate(delegate);
+        });
+    }
 };
 
 // TODO: Not just anyone should be able to listen for events that contain

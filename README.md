@@ -201,3 +201,7 @@ authApi(opts, function (err, userInfo) {
 ### `.session`
 
 Helpers for dealing with the Livefyre User session
+
+### `.delegate`
+
+Delegates as with `auth`, with an added feature. Old livefyre delegates for use with `fyre.conv` will be automatically adapted for use with `livefyre-auth`.

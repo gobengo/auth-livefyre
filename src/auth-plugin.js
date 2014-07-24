@@ -1,7 +1,8 @@
-var userServiceModule = require('./user-service');
+var authAdapters = require('./auth-adapters');
+var LivefyreUser = require('./user');
 var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
-var LivefyreUser = require('./user');
+var userServiceModule = require('./user-service');
 
 /**
  * An auth plugin that will handle livefyre credentials (lftokens) that are
@@ -67,6 +68,14 @@ module.exports = function (auth, serverUrl, opts) {
     auth.on('logout', function () {
         session.clear();
     });
+
+    // transparently adapt an old livefyre auth delegate to a new one
+    auth.delegate = (function(orig) {
+        return function (delegate) {
+            delegate = authAdapters.oldToNew(delegate);
+            orig.call(auth, delegate);
+        };
+    })(auth.delegate);
 };
 
 // TODO: Not just anyone should be able to listen for events that contain

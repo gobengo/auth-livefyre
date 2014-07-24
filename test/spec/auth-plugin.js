@@ -46,4 +46,34 @@ describe('livefyre-auth/auth-plugin', function () {
             livefyre: token
         });
     });
+
+    it('adapts old livefyre delegates on .delegate', function (done) {
+        var fyreDelegate = {
+            login: function () {},
+            logout: function () {},
+            viewProfile: function() {},
+            editProfile: function() {},
+            loginByCookie: function() {}
+        }
+        window.fyre = {
+            conv: {
+                user: {
+                    on: function () {},
+                    off: function () {},
+                    get: function () {}
+                },
+                    initializeGlobalServices: function () {},
+                ready: {
+                    trigger: function () {},
+                    hasFired: function () {}
+                }
+            }
+        }
+        auth.on('delegate', function(delegate) {
+            assert(!delegate.loginByCookie);
+            window.fyre = undefined;
+            done();
+        });
+        auth.delegate(fyreDelegate);
+    });
 });

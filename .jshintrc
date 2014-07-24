@@ -8,9 +8,11 @@
         "assert": true,
         "chai": true,
         "beforeEach": true,
+        "afterEach": true,
         "before": true,
         "after": true,
-        "Livefyre": true
+        "Livefyre": true,
+        "exports": true
     },
     "forin": true,
     "curly": true,

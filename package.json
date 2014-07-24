@@ -27,7 +27,7 @@
   },
   "scripts": {
     "hint": "./node_modules/jshint/bin/jshint src/ test/spec/; echo",
-    "postinstall": "./node_modules/bower/bin/bower install",
+    "postinstall": "./node_modules/bower/bin/bower install --force-latest",
     "start": "./node_modules/http-server/bin/http-server",
     "test": "./node_modules/karma/bin/karma start",
     "testp": "./node_modules/karma/bin/karma start --browsers=PhantomJS"

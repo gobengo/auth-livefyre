@@ -20,6 +20,10 @@ require.config({
   },{
     name: 'auth',
     location: 'lib/auth/src'
+  },{
+    name: 'auth-interface',
+    location: 'lib/auth-interface',
+    main: 'index'
   }],
   shim: {
     'sinon': {

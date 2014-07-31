@@ -1,6 +1,6 @@
 {
   "name": "livefyre-auth",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "dist/livefyre-auth.min.js",
   "devDependencies": {
     "almond": "0.2.6",
@@ -16,10 +16,11 @@
     "debug": "visionmedia/debug#~0.7.4",
     "js-md5": "~1.1.0",
     "auth": "Livefyre/auth#~0.2.0",
-    "mout": "~0.9.1"
+    "mout": "~0.9.1",
+    "auth-interface": "Livefyre/auth-interface"
   },
   "resolutions": {
-    "event-emitter": "~0.1.0",
+    "event-emitter": "0.1.0",
     "auth": "0.2.1",
     "view": "~1.3",
     "base64": "~0.4.0"

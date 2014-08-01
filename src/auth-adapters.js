@@ -182,7 +182,8 @@ function adaptOldDelegate(delegate) {
     newDelegate.logout = (function () {
         var originalFn = delegate.logout;
         return function (callback) {
-            originalFn.call(delegate, callbackHandler(callback));
+            originalFn.call(delegate, handler);
+            callback();
         };
     })();
 

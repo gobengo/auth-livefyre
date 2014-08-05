@@ -77,15 +77,34 @@ module.exports = function (auth, serverUrl, opts) {
         };
     })(auth.delegate);
 
-    // if fyre.conv auth is here then use it
-    if (window.fyre && window.fyre.conv && typeof fyre.conv.ready === 'function') {
-        fyre.conv.ready(function () {
-            if (typeof fyre.conv.getDelegate === 'function') {
-                var delegate = fyre.conv.getDelegate();
+    function consumeFyreDelegate() {
+        if (typeof fyre.conv.getDelegate === 'function') {
+            var delegate = fyre.conv.getDelegate();
+            if (!delegate.appkitMetaDelegate) {
                 auth.delegate(delegate);
             }
-        });
+        }
     }
+
+    function fyreReady() {
+        // if fyre.conv auth is here then use it
+        if (window.fyre && window.fyre.conv && typeof fyre.conv.ready === 'function') {
+            fyre.conv.ready(function () {
+                consumeFyreDelegate();
+            });
+            return true;
+        }
+    }
+
+    // poll for fyre.conv with exponential backoff
+    var attempts = 0;
+    (function poll() {
+        attempts++;
+        if (attempts > 15 || fyreReady()) {
+            return;
+        }
+        setTimeout(poll, 100 * attempts);
+    })();
 };
 
 // TODO: Not just anyone should be able to listen for events that contain

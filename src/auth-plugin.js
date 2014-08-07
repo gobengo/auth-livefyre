@@ -80,7 +80,7 @@ module.exports = function (auth, serverUrl, opts) {
     function consumeFyreDelegate() {
         if (typeof fyre.conv.getDelegate === 'function') {
             var delegate = fyre.conv.getDelegate();
-            if (!delegate.appkitMetaDelegate) {
+            if (delegate && !delegate.appkitMetaDelegate) {
                 auth.delegate(delegate);
             }
         }
@@ -100,7 +100,7 @@ module.exports = function (auth, serverUrl, opts) {
     var attempts = 0;
     (function poll() {
         attempts++;
-        if (attempts > 15 || fyreReady()) {
+        if (attempts > 15 || auth.hasDelegate() || fyreReady()) {
             return;
         }
         setTimeout(poll, 100 * attempts);

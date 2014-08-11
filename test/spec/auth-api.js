@@ -2,6 +2,7 @@ var assert = require('chai').assert;
 
 var authApi = require('livefyre-auth/auth-api');
 var LivefyreUser = require('livefyre-auth/user');
+var sinon = require('sinon');
 
 var labsToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
 
@@ -41,7 +42,38 @@ describe('livefyre-auth/auth-api', function () {
                 done(err);
             });
         });
+
+        it('uses a network if provided', function (done) {
+            // Patch authApi._authApi to return a response
+            // as if we only passed a token, no collection info
+            var modAuthApi = createMockAuthApi(modResponse);
+            var reqSpy = sinon.spy(modAuthApi, '_request');
+            var opts = {
+                token: labsToken,
+                network: 'yo network'
+            };
+            modAuthApi.authenticate(opts, function (err, userInfo) {
+                assert(reqSpy.calledWith("http://admin.yo network/api/v3.0/auth/?lftoken=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY"));
+                done(err);
+            });
+        });
+
+        it('uses a serverUrl if provided', function (done) {
+            // Patch authApi._authApi to return a response
+            // as if we only passed a token, no collection info
+            var modAuthApi = createMockAuthApi(modResponse);
+            var reqSpy = sinon.spy(modAuthApi, '_request');
+            var opts = {
+                token: labsToken,
+                serverUrl: 'yo serverUrl'
+            };
+            modAuthApi.authenticate(opts, function (err, userInfo) {
+                assert(reqSpy.calledWith("yo serverUrl/api/v3.0/auth/?lftoken=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY"));
+                done(err);
+            });
+        });
     });
+
     /**
      * auth-api can update a LivefyreUser instance.This keeps the logic
      * in the same module as the fetches the auth response

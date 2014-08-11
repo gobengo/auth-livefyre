@@ -16,6 +16,7 @@ var authApi = module.exports = {};
  * @param {string=} opts.bpChannel
  * @param {string=} opts.articleId
  * @param {string=} opts.siteId
+ * @param {string=} opts.network
  * @param {function()=} callback
  */
 authApi.authenticate = function (opts, errback) {
@@ -28,6 +29,10 @@ authApi.authenticate = function (opts, errback) {
 
     if (token) {
         qsParts.push(qsParam('lftoken', opts.token));
+    }
+
+    if (opts.network) {
+        serverUrl = serverUrlFromNetwork(opts.network);
     }
 
     if (! serverUrl) {
@@ -246,8 +251,12 @@ function networkFromToken (token) {
     return network;
 }
 
-function serverUrlFromToken(token) {
-    var network = networkFromToken(token);
+function serverUrlFromNetwork(network) {
     var serverUrl = document.location.protocol + '//admin.' + network;
     return serverUrl;
+}
+
+function serverUrlFromToken(token) {
+    var network = networkFromToken(token);
+    return serverUrlFromNetwork(network);
 }

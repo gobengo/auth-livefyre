@@ -11,14 +11,19 @@ var session = require('./session');
 
 /**
  * @param {string} serverUrl
+ * @param {Object=} opts
+ * @param {string=} opts.articleId
+ * @param {string=} opts.siteId
  * @constructor
  * @extends {BaseDelegate}
  */
-function LivefyreDelegate(serverUrl) {
+function LivefyreDelegate(serverUrl, opts) {
     if ( ! (this instanceof LivefyreDelegate)) {
-        return new LivefyreDelegate(serverUrl);
+        return new LivefyreDelegate(serverUrl, opts);
     }
+    opts = opts || {};
     this.serverUrl = serverUrl;
+    this.siteId = opts.siteId;
 }
 
 /**
@@ -42,8 +47,12 @@ LivefyreDelegate.prototype.login = function(authenticate) {
 LivefyreDelegate.prototype._popup = function(callback) {
     var serverUrl = this.serverUrl;
     var windowUrl = serverUrl + '/auth/popup/login/';
-    var popup = window.open(windowUrl, 'authWindow',
-    'width=530;height=365;location=true;menubar=false;resizable=false;scrollbars=false');
+    var features = 'width=530;height=365;location=true;menubar=false;resizable=false;scrollbars=false';
+    var params = '?start=true';
+    if (this.siteId) {
+        params += '&site_id=' + this.siteId;
+    }
+    var popup = window.open(windowUrl + params, 'authWindow', features);
     var timeout = setInterval(function() {
         testResult(callback, popup);
     }, 100);

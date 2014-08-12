@@ -19,17 +19,6 @@ credentials, and it will then try to authenticate them and log the user in with
 It will also load a user from session on page load, and clear the session
 on `auth` `logout` events.
 
-```javascript
-require('livefyre-auth').plugin(auth);
-```
-
-Note: To create a delegate for a non-production cluster, you'll need to pass the
-`serverUrl` as a second parameter to `.plugin`
-
-```javascript
-require('livefyre-auth').plugin(auth, 'uat.livefyre.com');
-```
-
 ## `.User`
 
 Create a Livefyre User model. It is rare that you'd create this directly.
@@ -144,11 +133,12 @@ permissions.getKeys(user, collection, function (err, keys) {
 });
 ```
 
-## `.createDelegate(serverUrl)`
+## `.createDelegate(serverUrl, opts)`
 
 Create an `auth` delegate object to be passed to `auth.delegate()`.
 This will configure auth to be controlled by Livefyre.com accounts and profiles.
 Livefyre Enterprise customers will rarely use this.
+
 
 ```javascript
 var livefyreAuthDelegate = require('livefyre-auth').createDelegate('http://livefyre.com');
@@ -156,6 +146,18 @@ var livefyreAuthDelegate = require('livefyre-auth').createDelegate('http://livef
 auth.delegate(livefyreAuthDelegate);
 
 // This would launch a Livefyre.com login window
+auth.login();
+```
+
+Optionally, to enable site specific features, pass an opts Object with the site ID. e.g.,
+
+```javascript
+var delegateOpts = {
+    siteId: 13432
+}
+var livefyreAuthDelegate = require('livefyre-auth').createDelegate('http://livefyre.com', delegateOpts);
+
+// This might enable, for example, guest commenting.
 auth.login();
 ```
 

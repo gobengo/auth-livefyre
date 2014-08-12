@@ -12,7 +12,6 @@ var session = require('./session');
 /**
  * @param {string} serverUrl
  * @param {Object=} opts
- * @param {string=} opts.articleId
  * @param {string=} opts.siteId
  * @constructor
  * @extends {BaseDelegate}

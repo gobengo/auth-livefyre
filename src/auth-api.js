@@ -257,8 +257,11 @@ function getDomain(network) {
 
 function serverUrlFromNetwork(network) {
     var domain = getDomain(network);
-    var serverUrl = document.location.protocol + '//' + domain + '.admin.fyre.co';
-    return serverUrl;
+    var protocol = document.location.protocol;
+    if (domain === 'livefyre') {
+        return protocol + '//' + 'admin.' + network;
+    }
+    return protocol + '//' + domain + '.admin.fyre.co'
 }
 
 function serverUrlFromToken(token) {

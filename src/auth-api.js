@@ -251,8 +251,13 @@ function networkFromToken (token) {
     return network;
 }
 
+function getDomain(network) {
+    return network.split('.')[0];
+}
+
 function serverUrlFromNetwork(network) {
-    var serverUrl = document.location.protocol + '//admin.' + network;
+    var domain = getDomain(network);
+    var serverUrl = document.location.protocol + '//' + domain + '.admin.fyre.co';
     return serverUrl;
 }
 

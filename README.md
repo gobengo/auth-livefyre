@@ -48,7 +48,7 @@ Set an attribute. This will emit events.
 // set with key, val args
 user.set('id', 1);
 // or a key/value map
-user.get({
+user.set({
     id: 2,
     displayName: 'ben'
 });

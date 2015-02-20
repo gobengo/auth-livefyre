@@ -53,7 +53,7 @@ describe('livefyre-auth/auth-api', function () {
                 network: 'yo network'
             };
             modAuthApi.authenticate(opts, function (err, userInfo) {
-                assert(reqSpy.calledWith("http://admin.yo network/api/v3.0/auth/?lftoken=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY"));
+                assert(reqSpy.calledWith("http://yo network.admin.fyre.co/api/v3.0/auth/?lftoken=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY"));
                 done(err);
             });
         });

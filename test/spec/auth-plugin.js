@@ -46,4 +46,50 @@ describe('livefyre-auth/auth-plugin', function () {
             livefyre: token
         });
     });
+    it('passes bpChannel authN credentials to userService', function () {
+        var auth = authModule.create();
+        var userServiceFetchSpy = sinon.spy();
+        var bpChannelId = 'ohi i am a bp channel';
+        livefyreAuthPlugin(auth, null, {
+            userService: {
+                fetch: userServiceFetchSpy
+            }
+        });
+        auth.authenticate({
+            livefyre: {
+                bpChannel: bpChannelId
+            }
+        });
+        assert.equal(
+            userServiceFetchSpy.lastCall.args[0].bpChannel, bpChannelId);
+    });
+    it('adapts old livefyre delegates on .delegate', function (done) {
+        var fyreDelegate = {
+            login: function () {},
+            logout: function () {},
+            viewProfile: function() {},
+            editProfile: function() {},
+            loginByCookie: function() {}
+        }
+        window.fyre = {
+            conv: {
+                user: {
+                    on: function () {},
+                    off: function () {},
+                    get: function () {}
+                },
+                    initializeGlobalServices: function () {},
+                ready: {
+                    trigger: function () {},
+                    hasFired: function () {}
+                }
+            }
+        }
+        auth.on('delegate', function(delegate) {
+            assert(!delegate.loginByCookie);
+            window.fyre = undefined;
+            done();
+        });
+        auth.delegate(fyreDelegate);
+    });
 });

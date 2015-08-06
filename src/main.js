@@ -22,5 +22,4 @@ exports.userService = require('./user-service');
 exports.api = require('./auth-api');
 
 // plugin to another `auth`
-exports.plugin = plugin;
-
+exports.authPlugin = plugin;

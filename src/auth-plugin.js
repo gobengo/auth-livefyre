@@ -1,7 +1,8 @@
-var userServiceModule = require('./user-service');
+var authAdapters = require('./auth-adapters');
+var LivefyreUser = require('./user');
 var log = require('debug')('livefyre-auth/auth-plugin');
 var session = require('./session');
-var LivefyreUser = require('./user');
+var userServiceModule = require('./user-service');
 
 /**
  * An auth plugin that will handle livefyre credentials (lftokens) that are
@@ -39,17 +40,28 @@ module.exports = function (auth, serverUrl, opts) {
         if ( ! credentials) {
             return;
         }
-        if (typeof credentials === 'string') {
-            credentials = {
-                token: credentials,
-                serverUrl: serverUrl
-            };
-        }
+
         // The LivefyreAuthDelegate will be able to construct a user
         // by nature of its login process. Those are valid credentials
         // in place of a token, and we can save making an extra request
         if (credentials instanceof LivefyreUser) {
             return login(credentials);
+        } else if (typeof credentials === 'string') {
+            credentials = {
+                token: credentials,
+                serverUrl: serverUrl
+            };
+        }
+
+        // Default to plugin's serverUrl if not explicitly passed in credentials
+        if (serverUrl && ! credentials.serverUrl) {
+            credentials.serverUrl = serverUrl;
+        }
+
+        // Allow passing lftoken if you insist (e.g. designer)
+        // https://github.com/Livefyre/livefyre-auth/commit/d8a02e0e2b3d16eead721cd5fa8bafe2ecab4c96#commitcomment-12548333
+        if (credentials.lftoken && ! credentials.token) {
+            credentials.token = credentials.lftoken;
         }
 
         // Try to get a user from the credentials
@@ -67,6 +79,43 @@ module.exports = function (auth, serverUrl, opts) {
     auth.on('logout', function () {
         session.clear();
     });
+
+    // transparently adapt an old livefyre auth delegate to a new one
+    auth.delegate = (function(orig) {
+        return function (delegate) {
+            delegate = authAdapters.oldToNew(delegate);
+            orig.call(auth, delegate);
+        };
+    })(auth.delegate);
+
+    function consumeFyreDelegate() {
+        if (typeof fyre.conv.getDelegate === 'function') {
+            var delegate = fyre.conv.getDelegate();
+            if (delegate && !delegate.appkitMetaDelegate) {
+                auth.delegate(delegate);
+            }
+        }
+    }
+
+    function fyreReady() {
+        // if fyre.conv auth is here then use it
+        if (window.fyre && window.fyre.conv && typeof fyre.conv.ready === 'function') {
+            fyre.conv.ready(function () {
+                consumeFyreDelegate();
+            });
+            return true;
+        }
+    }
+
+    // poll for fyre.conv with exponential backoff
+    var attempts = 0;
+    (function poll() {
+        attempts++;
+        if (attempts > 15 || auth.hasDelegate() || fyreReady()) {
+            return;
+        }
+        setTimeout(poll, 100 * attempts);
+    })();
 };
 
 // TODO: Not just anyone should be able to listen for events that contain

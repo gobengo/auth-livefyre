@@ -8,6 +8,7 @@
 
 var EventEmitter = require('event-emitter');
 var inherits = require('inherits');
+var some = require('mout/array/some');
 
 /**
  * @param {Object} initialAttr
@@ -88,7 +89,7 @@ LivefyreUser.prototype.isAuthenticated = function() {
  * @return {boolean}
  */
 function isModByCollectionInfo(scopeObj) {
-    var isMod = this.authorizations.some(function (authorization) {
+    var isMod = some(this.authorizations, function (authorization) {
         var collection = authorization.collection;
         return Boolean(collection &&
             authorization.moderatorKey &&
@@ -133,7 +134,7 @@ LivefyreUser.prototype.getAuthorizationByCollectionId = function(collectionId) {
  * @return {boolean}
  */
 function isModByNetwork(networkId) {
-    var isMod = this.authorizations.some(function (authorization) {
+    var isMod = some(this.authorizations, function (authorization) {
         var authNetwork = authorization.network;
         return authNetwork && authNetwork === networkId && authorization.moderator;
     });
@@ -146,7 +147,7 @@ function isModByNetwork(networkId) {
  * @return {boolean}
  */
 function isModBySiteId(siteId) {
-    var isMod = this.authorizations.some(function (authorization) {
+    var isMod = some(this.authorizations, function (authorization) {
         var authSiteId = authorization.siteId;
         return authSiteId && authSiteId === siteId && authorization.moderator;
     });

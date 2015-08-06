@@ -1,6 +1,8 @@
 var base64 = require('base64');
-var jsonp = require('./util/jsonp');
 var CollectionAuthorization = require('./collection-authorization');
+var filter = require('mout/array/filter');
+var jsonp = require('./util/jsonp');
+var map = require('mout/array/map');
 
 /**
  * An Object that can talk to Livefyre's Auth API over HTTP
@@ -14,6 +16,7 @@ var authApi = module.exports = {};
  * @param {string=} opts.bpChannel
  * @param {string=} opts.articleId
  * @param {string=} opts.siteId
+ * @param {string=} opts.network
  * @param {function()=} callback
  */
 authApi.authenticate = function (opts, errback) {
@@ -26,6 +29,10 @@ authApi.authenticate = function (opts, errback) {
 
     if (token) {
         qsParts.push(qsParam('lftoken', opts.token));
+    }
+
+    if (opts.network) {
+        serverUrl = serverUrlFromNetwork(opts.network);
     }
 
     if (! serverUrl) {
@@ -93,6 +100,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     var collectionAuthorization;
 
     var attributes = extend({}, profile, {
+        serverUrl: userInfo.serverUrl,
         token: token,
         tokenExpiresAt: tokenExpiresAt
     });
@@ -123,7 +131,7 @@ authApi.updateUser = function (user, userInfo, userInfoCollection) {
     // Add all authorizations to user
     // TODO: Don't push duplicates...
     // Filter newAuthorizations to only include those who aren't duplicates
-    var uniqueAuthorizations = newAuthorizations.filter(function (authorization) {
+    var uniqueAuthorizations = filter(newAuthorizations, function (authorization) {
         if (authorization.network) {
             return ! user.isMod({ network: authorization.network });
         }
@@ -179,7 +187,7 @@ authApi.createNetworkAuthorizations = function (userInfo) {
     if ( ! (networkModScopes && networkModScopes.length > 0)) {
         return [];
     }
-    var networkAuthorizations = networkModScopes.map(function (network) {
+    var networkAuthorizations = map(networkModScopes, function (network) {
         var authorization = {
             network: network,
             moderator: true
@@ -200,7 +208,7 @@ authApi.createSiteAuthorizations = function (userInfo) {
     if ( ! (siteModScopes && siteModScopes.length > 0)) {
         return [];
     }
-    var siteAuthorizations = siteModScopes.map(function (siteId) {
+    var siteAuthorizations = map(siteModScopes, function (siteId) {
         var authorization = {
             siteId: siteId,
             moderator: true
@@ -243,8 +251,20 @@ function networkFromToken (token) {
     return network;
 }
 
+function getDomain(network) {
+    return network.split('.')[0];
+}
+
+function serverUrlFromNetwork(network) {
+    var domain = getDomain(network);
+    var protocol = document.location.protocol !== 'http:' ? 'https:' : document.location.protocol;
+    if (domain === 'livefyre') {
+        return protocol + '//' + 'admin.' + network;
+    }
+    return protocol + '//' + domain + '.admin.fyre.co'
+}
+
 function serverUrlFromToken(token) {
     var network = networkFromToken(token);
-    var serverUrl = document.location.protocol + '//admin.' + network;
-    return serverUrl;
+    return serverUrlFromNetwork(network);
 }

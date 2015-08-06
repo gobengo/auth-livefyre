@@ -1,6 +1,7 @@
 'use strict';
 
 var authApi = require('./auth-api');
+var map = require('mout/array/map');
 var session = require('./session');
 
 var permissions = module.exports = {};
@@ -8,16 +9,20 @@ var permissions = module.exports = {};
 
 /**
  * Fetch a user's permissions for a Livefyre Collection
- * @param token {string} usertoken
+ * @param user {User} user
+ * @param collection {Collection}
  * @param collection.network {string} Network of Collection
  * @param collection.siteId {string} Site ID of Collection
  * @param collection.articleId {string} Article ID of Collection
  * @throws Error if you didn't pass all required Collection info
  */
-permissions.forCollection = function (token, collection, errback) {
+permissions.forCollection = function (user, collection, errback) {
     validateCollection(collection);
-    var opts = Object.create(collection);
-    opts.token = token;
+    var opts = {};
+    opts.token = user.get('token');
+    opts.serverUrl = user.get('serverUrl');
+    opts.siteId = collection.siteId;
+    opts.articleId = collection.articleId;
 
     authApi.authenticate(opts, function (err, userInfo) {
         if (err) {
@@ -28,6 +33,8 @@ permissions.forCollection = function (token, collection, errback) {
             err = new Error('fetch-user got empty auth response');
             return errback(err);
         }
+        // Store the serverUrl (bad, also duplicated from user-service)
+        userInfo.serverUrl = opts.serverUrl;
 
         errback(null, userInfo);
     });
@@ -35,6 +42,7 @@ permissions.forCollection = function (token, collection, errback) {
 
 /**
  * Get the eref keys for a user and for the specified collection.
+ * @param user {User} user
  * @param collection {Collection}
  * @param errback {function(?Error, Array)}
  */
@@ -42,7 +50,7 @@ permissions.getKeys = function (user, collection, errback) {
     var authorization = user.getAuthorizationByCollectionId(collection.id);
 
     function collKeyset(authorization) {
-        var authorKeys = authorization.authors.map(function(authorObj) {
+        var authorKeys = map(authorization.authors, function(authorObj) {
             return authorObj.key;
         });
         if (authorization.moderatorKey) {
@@ -56,7 +64,7 @@ permissions.getKeys = function (user, collection, errback) {
     }
 
     // user has not yet fetched permissions for this collection, get them now!11
-    permissions.forCollection(user.token, collection, function (err, userInfo) {
+    permissions.forCollection(user, collection, function (err, userInfo) {
         if (err) {
             return errback(err);
         }

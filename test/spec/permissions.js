@@ -21,19 +21,23 @@ describe('livefyre-auth/permissions', function () {
                 siteId: '315833',
                 articleId: 'custom-1386874785082'
             };
-            var spy = sinon.spy(authApi, 'authenticate');
-            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
-                // no mock request, so no dataz
+            var stub = sinon.stub(authApi, 'authenticate', function(opts, cb) {
+                cb(new Error());
+            });
+            var user = new LivefyreUser();
+            user.set('serverUrl', 'serve this');
+            user.set('token', labsToken);
+            permissions.forCollection(user, collectionInfo, function (err, userInfo) {
                 assert.instanceOf(err, Error);
 
-                assert(spy.called);
-                var opts = spy.args[0][0];
+                assert(stub.called);
+                var opts = stub.args[0][0];
                 assert.equal(opts.token, labsToken);
-                assert.equal(opts.network, collectionInfo.network);
                 assert.equal(opts.siteId, collectionInfo.siteId);
                 assert.equal(opts.articleId, collectionInfo.articleId);
+                assert.equal(opts.serverUrl, 'serve this');
 
-                spy.restore();
+                stub.restore();
                 done();
             });
         });
@@ -47,7 +51,7 @@ describe('livefyre-auth/permissions', function () {
             var stub = sinon.stub(authApi, 'authenticate', function (opts, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
-            permissions.forCollection(labsToken, collectionInfo, function (err, userInfo) {
+            permissions.forCollection(new LivefyreUser(), collectionInfo, function (err, userInfo) {
                 assert.equal(userInfo.auth_token.value, JSON.parse(mockAuthResp).data.auth_token.value);
                 stub.restore();
                 done();
@@ -59,8 +63,8 @@ describe('livefyre-auth/permissions', function () {
                 var collection = {
                     siteId: '111'
                 };
-                permissions.forCollection(labsToken, collection, function () {
-                    // Should get here because collection is invalid
+                permissions.forCollection(new LivefyreUser(), collection, function () {
+                    // Shouldn't get here because collection is invalid
                 });
             }
             assert.throws(doWithInvalidCollection);
@@ -85,7 +89,7 @@ describe('livefyre-auth/permissions', function () {
                 key: 'batmobile'
             }];
             user = new LivefyreUser();
-            user.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY';
+            user.set('token', 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGFicy5meXJlLmNvIiwgImV4cGlyZXMiOiAxMzk5MTk1MTYwLjE1NTc2MSwgInVzZXJfaWQiOiAiY29tbWVudGVyXzAifQ.N77QlLeF-Z6MMJhospdwpPpZH4HCfaf20fIPhL7GdOY');
             user.authorizations.push(authorization);
             permissionsSpy = sinon.spy(permissions, 'forCollection');
         });
@@ -113,18 +117,23 @@ describe('livefyre-auth/permissions', function () {
         });
         it('fetches permissions if there is no authorization for the collection (and fails)', function (done) {
             user.authorizations = [];
+            permissionsSpy.restore();
+            var permissionStub = sinon.stub(permissions, 'forCollection', function(user, collection, errback) {
+                errback(new Error());
+            });
             permissions.getKeys(user, collection, function(err, keys) {
                 assert.instanceOf(err, Error);
-                assert(permissionsSpy.called);
-                var args = permissionsSpy.args[0];
-                assert.equal(args[0], user.token);
-                assert.deepEqual(args[1], collection);
+                assert(permissionStub.called);
+                var args = permissionStub.args[0];
+                assert.equal(args[0], user);
+                assert.equal(args[1], collection);
+                permissionStub.restore();
                 done();
             });
         });
         it('fetches permissions if there is no authorization for the collection (and succeeds)', function (done) {
             permissionsSpy.restore();
-            var permissionStub = sinon.stub(permissions, 'forCollection', function(blah, bleh, errback) {
+            var permissionStub = sinon.stub(permissions, 'forCollection', function(user, collection, errback) {
                 errback(null, JSON.parse(mockAuthResp).data);
             });
             user.authorizations = [];

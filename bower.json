@@ -1,6 +1,6 @@
 {
   "name": "livefyre-auth",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "main": "dist/livefyre-auth.min.js",
   "devDependencies": {
     "almond": "0.2.6",

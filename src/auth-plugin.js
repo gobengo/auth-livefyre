@@ -51,12 +51,17 @@ module.exports = function (auth, serverUrl, opts) {
                 token: credentials,
                 serverUrl: serverUrl
             };
-        } else if (typeof credentials === 'object') {
-            credentials = {
-                token: credentials.lftoken,
-                serverUrl: credentials.serverUrl ?  credentials.serverUrl : serverUrl,
-                network: credentials.network
-            };
+        }
+
+        // Default to plugin's serverUrl if not explicitly passed in credentials
+        if (serverUrl && ! credentials.serverUrl) {
+            credentials.serverUrl = serverUrl;
+        }
+
+        // Allow passing lftoken if you insist (e.g. designer)
+        // https://github.com/Livefyre/livefyre-auth/commit/d8a02e0e2b3d16eead721cd5fa8bafe2ecab4c96#commitcomment-12548333
+        if (credentials.lftoken && ! credentials.token) {
+            credentials.token = credentials.lftoken;
         }
 
         // Try to get a user from the credentials
